@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Menu Resto Kami</title>
+</head>
+<body>
+
+  <h2>Daftar Menu</h2>
+  <ul>
+    <li>Salad</li>
+    <li>Oatmeal</li>
+    <li>Roti Gandum</li>
+  </ul>
+
+  <h2>Gambar Menu</h2>
+  <img src="images.jpg" alt="Our Favourite Menu" width="200">
+
+  <h2>Informasi Alamat Resto Kami</h2>
+  <p><a href="https://maps.google.com" target="_blank">Jangan lupa datang ya!</a></p>
+
+  <section>
+    <h2>Favourite Menu</h2>
+    <p>Smoothie</p>
+    <p>Green Salad</p>
+  </section>
+
+  <h2>Daftar Harga</h2>
+  <table border="1">
+    <tr>
+      <th>Nama Menu</th>
+      <th>Harga</th>
+    </tr>
+    <tr>
+      <td>Salad</td>
+      <td>Rp15.000</td>
+    </tr>
+    <tr>
+      <td>Oatmeal</td>
+      <td>Rp12.000</td>
+    </tr>
+    <tr>
+      <td>Roti Gandum</td>
+      <td>Rp10.000</td>
+    </tr>
+  </table>
+
+  <h2>Order Time</h2>
+  <form action="#" method="POST">
+    <label for="nama">Nama:</label>
+    <input type="text" id="nama" name="nama" placeholder="Nama Anda" required>
+    <br><br>
+
+    <label for="menu">Pesanan:</label>
+    <input type="text" id="menu" name="menu" placeholder="Nama menu yang dipesan" required>
+    <br><br>
+
+    <label for="jumlah">Jumlah:</label>
+    <input type="number" id="jumlah" name="jumlah" min="1" placeholder="Jumlah pesanan" required>
+    <br><br>
+
+    <input type="submit" value="Order">
+  </form>
+
+</body>
+</html>

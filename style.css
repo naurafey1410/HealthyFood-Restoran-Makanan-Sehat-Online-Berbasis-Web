@@ -1,0 +1,81 @@
+body {
+    margin: 0;
+    background: linear-gradient(180deg, #d8ef9a 0%, #f4f8eb 35%, #ffffff 75%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.navbar {
+    position: fixed;
+    top: 15px;                  
+    left: 50%;
+    transform: translateX(-50%); 
+    width: 93%;                 
+    height: 60px;
+    padding: 0 25px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.75); 
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    z-index: 1000;             
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+}
+
+.btn-app {
+    text-decoration: none;
+    color: #333;
+    font-size: 13px;
+    border: 1.5px solid #7DAA1E;
+    padding: 6px 16px;
+    border-radius: 20px;
+}
+
+.header {
+    width: 93%;
+    margin: 95px auto 40px auto; 
+    padding: 25px 30px;
+    box-sizing: border-box;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    position: relative;
+    z-index: 1;                 
+}
+
+.tulisan_pembuka {
+    font-weight: bold;
+    margin-left: 9px;
+    font-size: 18px;
+    color: #7DAA1E;
+    margin-bottom: -18px;
+    position: relative;
+    z-index: 2;
+}
+
+.slogan {
+    margin-left: 8px;
+    color: #555555;
+}

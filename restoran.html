@@ -1,28 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <title>Document</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <title>Healthy Restaurant</title>
 </head>
+
 <body>
 
+    <!-- NAVBAR -->
     <nav class="navbar">
-        <a href="#" class="btn-app">Restorant</a>
+
+        <a href="#" class="btn-app">Restaurant</a>
+
         <ul class="nav-links">
-            <li><a href="#">Pesan Online</a></li>
-            <li><a href="#">Pesan</a></li>
-            <li><a href="#">Ketring</a></li>
+            <li>
+                <a href="#menu">Pesan Online</a>
+            </li>
+
+            <li>
+                <a href="#menu">Pesan</a>
+            </li>
+
+            <li>
+                <a href="#" id="btn-katering">Katering</a>
+            </li>
+
+            <li>
+                <a href="#" id="btn-keranjang">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Keranjang
+                    <span id="jumlah-keranjang">0</span>
+                </a>
+            </li>
         </ul>
     </nav>
 
+    <!-- HEADER -->
     <div class="header">
         <div>
             <p class="tulisan_pembuka">Welcome To</p>
-            <img src="gambar/logo.png" width="320" height="190">
-            <p class="slogan">Awali langkah hidup sehatmu dengan mengonsumsi makanan kaya serat<br>dan vitamin demi masa depan yang cemerlang.</p>
+
+            <img src="gambar/logo.png"
+                 width="320"
+                 height="190"
+                 alt="Logo Restaurant">
+
+            <p class="slogan">
+                Awali langkah hidup sehatmu dengan mengonsumsi makanan kaya serat
+                <br>
+                dan vitamin demi masa depan yang cemerlang.
+            </p>
             <div>
                 <a href="#menu" class="tombol_menu">
                     <span>Menu</span>
@@ -30,70 +66,208 @@
                 </a>
             </div>
         </div>
+
         <div class="food-wrapper">
-            <img src="gambar/daun1.png" class="daun daun-1" alt="Daun 1">
-            <img src="gambar/daun2.png" class="daun daun-2" alt="Daun 2">
-            <img src="gambar/gambar_header.png" class="gambar_header" width="350" height="350" alt="Makanan">
+
+            <img src="gambar/daun1.png"
+                 class="daun daun-1"
+                 alt="Daun 1">
+
+            <img src="gambar/daun2.png"
+                 class="daun daun-2"
+                 alt="Daun 2">
+
+            <img src="gambar/gambar_header.png"
+                 class="gambar_header"
+                 width="350"
+                 height="350"
+                 alt="Makanan">
+
         </div>
     </div>
 
+    <!-- MENU MAKANAN -->
     <article id="menu">
         <div class="menu">
+
+            <!-- SALAD -->
             <div class="card">
-                <img src="gambar/salad.jpg">
+
+                <img src="gambar/salad.jpg" alt="Salad Sayur">
+
                 <div class="card-content">
+
                     <h3>Salad Sayur</h3>
                     <p>250 - 350 kkal</p>
                     <span>Rp 25.000</span>
-                    <div class="best">Best Seller</div>
+                    <div class="best">
+                        Best Seller
+                    </div>
+
+                    <button class="btn-pesan"
+                            data-nama="Salad Sayur"
+                            data-harga="25000">
+                        Pesan
+                    </button>
+
                 </div>
             </div>
+
+            <!-- STEAK TEMPE -->
             <div class="card">
-                <img src="gambar/steak_tempe.webp">
+                <img src="gambar/steak_tempe.webp" alt="Steak Tempe">
+
                 <div class="card-content">
                     <h3>Steak Tempe</h3>
                     <p>280 - 380 kkal</p>
                     <span>Rp 38.000</span>
-                    <div class="best">Best Seller</div>
+
+                    <div class="best">
+                        Best Seller
+                    </div>
+
+                    <button class="btn-pesan"
+                            data-nama="Steak Tempe"
+                            data-harga="38000">
+                        Pesan
+                    </button>
+
                 </div>
             </div>
+
+
+            <!-- STEAK JAMUR -->
             <div class="card">
-                <img src="gambar/steak_jamur.jpg">
+                <img src="gambar/steak_jamur.jpg" alt="Steak Jamur">
+
                 <div class="card-content">
                     <h3>Steak Jamur</h3>
                     <p>320 - 420 kkal</p>
                     <span>Rp 40.000</span>
-                    <div class="best">Best Seller</div>
+
+                    <div class="best">
+                        Best Seller
+                    </div>
+
+                    <button class="btn-pesan"
+                            data-nama="Steak Jamur"
+                            data-harga="40000">
+                        Pesan
+                    </button>
+
                 </div>
             </div>
+
+            <!-- MIE BAYAM -->
             <div class="card">
-                <img src="gambar/mie_bayam.webp">
+                <img src="gambar/mie_bayam.webp" alt="Mie Bayam Hijau">
+
                 <div class="card-content">
+
                     <h3>Mie Bayam Hijau</h3>
                     <p>380 - 480 kkal</p>
                     <span>Rp 28.000</span>
-                    <div class="best">Best Seller</div>
+                    <div class="best">
+                        Best Seller
+                    </div>
+
+                    <button class="btn-pesan"
+                            data-nama="Mie Bayam Hijau"
+                            data-harga="28000">
+                        Pesan
+                    </button>
+
                 </div>
             </div>
+
+            <!-- KEBAB -->
             <div class="card">
-                <img src="gambar/kebab_sayur.jpg">
+                <img src="gambar/kebab_sayur.jpg" alt="Kebab Sayur">
+
                 <div class="card-content">
                     <h3>Kebab Sayur</h3>
                     <p>300 - 400 kkal</p>
                     <span>Rp 22.000</span>
-                    <div class="best">Best Seller</div>
+
+                    <div class="best">
+                        Best Seller
+                    </div>
+                    <button class="btn-pesan"
+                            data-nama="Kebab Sayur"
+                            data-harga="22000">
+                        Pesan
+                    </button>
+
                 </div>
             </div>
+
+            <!-- SUP AYAM -->
             <div class="card">
-                <img src="gambar/sop_ayam.jpg">
+                <img src="gambar/sop_ayam.jpg" alt="Sup Ayam">
+
                 <div class="card-content">
                     <h3>Sup Ayam</h3>
                     <p>180 - 260 kkal</p>
                     <span>Rp 30.000</span>
-                    <div class="best">Best Seller</div>
+
+                    <div class="best">
+                        Best Seller
+                    </div>
+
+                    <button class="btn-pesan"
+                            data-nama="Sup Ayam"
+                            data-harga="30000">
+                        Pesan
+                    </button>
+
                 </div>
+
             </div>
+
         </div>
     </article>
+
+
+    <!-- PANEL KERANJANG -->
+    <div class="overlay" id="overlay"></div>
+    <div class="keranjang-panel" id="keranjang-panel">
+
+        <div class="keranjang-header">
+            <h2>
+                <i class="fa-solid fa-cart-shopping"></i>
+                Pesanan
+            </h2>
+
+            <button id="tutup-keranjang" class="btn-tutup">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+        <div id="isi-keranjang" class="isi-keranjang">
+            <p class="keranjang-kosong">
+                Keranjang masih kosong 🌱
+            </p>
+        </div>
+
+        <div class="keranjang-footer">
+
+            <div class="total">
+
+                <span>Total</span>
+
+                <strong id="total-harga">
+                    Rp 0
+                </strong>
+
+            </div>
+
+            <button id="btn-checkout" class="btn-checkout">
+                Pesan Sekarang
+            </button>
+
+        </div>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>

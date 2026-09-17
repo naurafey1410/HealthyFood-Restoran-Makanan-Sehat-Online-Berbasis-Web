@@ -1,6 +1,15 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
-    background: linear-gradient(180deg, #d8ef9a 0%, #f4f8eb 35%, #ffffff 75%);
+    background: linear-gradient(
+        180deg,
+        #d8ef9a 0%,
+        #f4f8eb 35%,
+        #ffffff 75%
+    );
     background-repeat: no-repeat;
     background-attachment: fixed;
     font-family: Arial, Helvetica, sans-serif;
@@ -8,23 +17,26 @@ body {
 
 .navbar {
     position: fixed;
-    top: 15px;                  
+    top: 15px;
     left: 50%;
-    transform: translateX(-50%); 
-    width: 93%;                 
+    transform: translateX(-50%);
+    width: 93%;
     height: 60px;
     padding: 0 25px;
-    box-sizing: border-box;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-radius: 25px;
-    background: rgba(255, 255, 255, 0.75); 
+    background: rgba(255, 255, 255, 0.75);
     backdrop-filter: blur(25px);
     -webkit-backdrop-filter: blur(25px);
+
     border: 1px solid rgba(255, 255, 255, 0.45);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.4);
-    z-index: 1000;             
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.08),
+        inset 0 1px 1px rgba(255, 255, 255, 0.4);
+
+    z-index: 1000;
 }
 
 .nav-links {
@@ -33,12 +45,18 @@ body {
     gap: 24px;
     margin: 0;
     padding: 0;
+    align-items: center;
 }
 
 .nav-links a {
     text-decoration: none;
     color: #555;
     font-size: 14px;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: #0f5508;
 }
 
 .btn-app {
@@ -50,21 +68,44 @@ body {
     border-radius: 20px;
 }
 
+
+#jumlah-keranjang {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    margin-left: 3px;
+    background: #0f5508;
+    color: white;
+    border-radius: 50%;
+    font-size: 11px;
+}
+
 .header {
     width: 93%;
-    margin: 95px auto 40px auto; 
+    margin: 95px auto 40px auto;
     padding: 25px 30px;
-    box-sizing: border-box;
     border-radius: 25px;
-    background: rgba(255, 255, 255, 0.45);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(18px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.4);
     position: relative;
     z-index: 1;
     display: flex;
     justify-content: space-between;
-    background: radial-gradient(circle at right bottom, rgba(49, 70, 6, 0.452) 0%, rgba(65, 92, 7, 0.25) 350px, transparent 121px), rgba(255, 255, 255, 0.45);                 
+    background:
+        radial-gradient(
+            circle at right bottom,
+            rgba(49, 70, 6, 0.452) 0%,
+            rgba(65, 92, 7, 0.25) 350px,
+            transparent 121px
+        ),
+        rgba(255, 255, 255, 0.45);
+
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.12),
+        inset 0 1px 1px rgba(255, 255, 255, 0.4);
 }
 
 .food-wrapper {
@@ -85,8 +126,9 @@ body {
     width: 65px;
     height: auto;
     z-index: 2;
-    pointer-events: none; 
+    pointer-events: none;
 }
+
 
 .daun-1 {
     top: 50px;
@@ -117,23 +159,33 @@ body {
     margin-bottom: 30px;
 }
 
+
 .tombol_menu {
     text-decoration: none;
     font-size: 17px;
     color: white;
     background: #0f5508;
     padding: 10px 33px;
-    box-shadow: 0 3px 20px #0e55089d, inset 0 1px 1px #198d0e88;
+    box-shadow:
+        0 3px 20px #0e55089d,
+        inset 0 1px 1px #198d0e88;
+
     border-radius: 25px;
+    display: inline-block;
+    transition: 0.3s;
+}
+
+.tombol_menu:hover {
+    transform: translateY(-3px);
+    background: #146e0b;
 }
 
 .menu {
     display: grid;
-    grid-template-columns: repeat(6, 1fr); 
-    gap: 20px;                             
+    grid-template-columns: repeat(6, 1fr);
+    gap: 20px;
     width: 93%;
     margin: 0 auto 50px auto;
-    box-sizing: border-box;
 }
 
 .card {
@@ -141,7 +193,15 @@ body {
     background: #ffffff;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
 .card img {
@@ -175,7 +235,7 @@ body {
     color: #0f5508;
 }
 
-.best{
+.best {
     background: #0f5508;
     color: white;
     font-size: 12px;
@@ -184,7 +244,228 @@ body {
     height: 20px;
     border-radius: 15px;
     display: flex;
-    justify-content: center; 
+    justify-content: center;
     align-items: center;
     margin-top: 7px;
+}
+
+.btn-pesan {
+    width: 100%;
+    margin-top: 12px;
+    padding: 9px;
+    border: none;
+    border-radius: 20px;
+    background: #7DAA1E;
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-pesan:hover {
+    background: #5f8512;
+    transform: scale(1.03);
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
+    z-index: 1998;
+}
+
+.overlay.aktif {
+    opacity: 1;
+    visibility: visible;
+}
+
+.keranjang-panel {
+    position: fixed;
+    top: 0;
+    right: -420px;
+    width: 400px;
+    max-width: 90%;
+    height: 100vh;
+    background: white;
+    z-index: 1999;
+    box-shadow:
+        -5px 0 25px rgba(0, 0, 0, 0.15);
+
+    transition: 0.4s;
+    display: flex;
+    flex-direction: column;
+}
+
+.keranjang-panel.aktif {
+    right: 0;
+}
+
+.keranjang-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #d8ef9a;
+}
+
+.keranjang-header h2 {
+    margin: 0;
+    color: #1B4D20;
+    font-size: 20px;
+}
+
+.btn-tutup {
+    border: none;
+    background: none;
+    font-size: 22px;
+    color: #555;
+    cursor: pointer;
+}
+
+.isi-keranjang {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.keranjang-kosong {
+    text-align: center;
+    color: #777;
+    margin-top: 50px;
+}
+
+.item-keranjang {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-info h4 {
+    margin: 0 0 5px 0;
+    color: #1B4D20;
+    font-size: 14px;
+}
+
+.item-info p {
+    margin: 0;
+    color: #0f5508;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.kontrol-jumlah {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-jumlah {
+    width: 25px;
+    height: 25px;
+    border: none;
+    border-radius: 50%;
+    background: #d8ef9a;
+    color: #1B4D20;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-hapus {
+    border: none;
+    background: none;
+    color: #c0392b;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.keranjang-footer {
+    padding: 20px;
+    border-top: 1px solid #eee;
+}
+
+.total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.total span {
+    color: #555;
+    font-size: 15px;
+}
+
+.total strong {
+    color: #0f5508;
+    font-size: 18px;
+}
+
+.btn-checkout {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 25px;
+    background: #0f5508;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-checkout:hover {
+    background: #146e0b;
+}
+
+@media (max-width: 1100px) {
+
+    .menu {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+    .navbar {
+        width: 90%;
+    }
+    .nav-links {
+        gap: 10px;
+    }
+    .nav-links a {
+        font-size: 11px;
+    }
+    .header {
+        flex-direction: column;
+    }
+    .food-wrapper {
+        margin: 30px auto 0 auto;
+    }
+    .menu {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 500px) {
+    .menu {
+        grid-template-columns: 1fr;
+    }
+    .keranjang-panel {
+        width: 100%;
+        max-width: 100%;
+    }
+
 }

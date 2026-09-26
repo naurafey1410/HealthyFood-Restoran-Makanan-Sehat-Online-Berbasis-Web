@@ -190,12 +190,13 @@ body {
 
 .card {
     width: 100%;
-    background: #ffffff;
+    background: #ffffff83;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow:
-        0 4px 15px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
     transition: 0.3s;
+    display: flex;
+    flex-direction: column;
 }
 
 .card:hover {
@@ -213,12 +214,17 @@ body {
 
 .card-content {
     padding: 14px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .card h3 {
     margin: 0 0 6px 0;
     font-size: 16px;
     color: #1B4D20;
+    min-height: 42px;
+    align-items: center;
 }
 
 .card p {
@@ -236,7 +242,7 @@ body {
 }
 
 .best {
-    background: #0f5508;
+    background: linear-gradient(90deg,rgba(74, 124, 89, 1) 0%, rgba(46, 90, 54, 1) 50%, rgba(18, 48, 22, 1) 100%);
     color: white;
     font-size: 12px;
     text-align: center;
@@ -251,11 +257,13 @@ body {
 
 .btn-pesan {
     width: 100%;
+    margin-top: 15px;
+    margin-top: auto;
     margin-top: 12px;
     padding: 9px;
     border: none;
     border-radius: 20px;
-    background: #7DAA1E;
+    background-color: #2E5A36;
     color: white;
     font-size: 13px;
     font-weight: bold;
@@ -264,7 +272,7 @@ body {
 }
 
 .btn-pesan:hover {
-    background: #5f8512;
+    background: linear-gradient(90deg,rgb(87, 165, 110) 0%, rgb(54, 128, 67) 50%, rgb(25, 88, 32) 100%);
     transform: scale(1.03);
 }
 
@@ -285,6 +293,99 @@ body {
     opacity: 1;
     visibility: visible;
 }
+
+/* */
+.card-featured-triple {
+    grid-column: span 3;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-featured-triple > img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+.triple-content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 14px;
+    background: #ffffff;
+    flex: 1;
+}
+
+.triple-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px dashed rgba(0, 0, 0, 0.15);
+    padding-right: 15px;
+}
+
+.triple-item:last-child {
+    border-right: none;
+    padding-right: 0;
+}
+
+.triple-item h3 {
+    margin-top: 0px;      
+    margin-bottom: 6px;   
+    font-size: 16px;
+    color: #1B4D20;
+    min-height: 42px;
+    line-height: 1.2;
+}
+
+.triple-item p {
+    margin-top: 0;
+    margin-bottom: 12px; 
+    font-size: 12px;
+    color: #666;
+    line-height: 1.4;
+}
+
+.triple-item span {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    color: #0f5508;
+}
+
+@media (max-width: 1100px) {
+    .card-featured-triple {
+        grid-column: span 3;
+    }
+}
+
+@media (max-width: 700px) {
+    .card-featured-triple {
+        grid-column: span 2;
+    }
+    .triple-content-wrapper {
+        flex-direction: column;
+    }
+    .triple-item {
+        border-right: none;
+        border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
+        padding-right: 0;
+        padding-bottom: 15px;
+    }
+    .triple-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+}
+
+@media (max-width: 500px) {
+    .card-featured-triple {
+        grid-column: span 1;
+    }
+}
+/* */
 
 .keranjang-panel {
     position: fixed;

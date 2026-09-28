@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Login Admin - Healthy Restaurant</title>
+</head>
+
+<body>
+    <div class="login-wrapper">
+        <div class="login-box">
+            <div class="ikon-login">
+                <i class="fa-solid fa-leaf"></i>
+            </div>
+
+            <h1>Admin HealthyFood</h1>
+            <p class="subjudul">Masuk untuk mengelola restoran Anda</p>
+
+            <form id="form-login">
+                <div class="form-grup">
+                    <label for="input-username">Username</label>
+                    <input type="text" id="input-username" placeholder="Masukkan username" required>
+                </div>
+
+                <div class="form-grup">
+                    <label for="input-password">Password</label>
+                    <input type="password" id="input-password" placeholder="Masukkan password" required>
+                </div>
+
+                <p class="pesan-error" id="pesan-error"></p>
+
+                <button type="submit" class="btn-login">Masuk</button>
+            </form>
+
+            <p class="login-hint">
+                <a href="../restoran.html">&larr; Kembali ke halaman utama</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Produk - Admin HealthyFood</title>
+</head>
+
+<body>
+    <div class="admin-wrapper">
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <main class="admin-content">
+            <div class="admin-topbar">
+                <div>
+                    <h1>Kelola Produk</h1>
+                    <p>Perubahan di sini langsung tampil di halaman customer.</p>
+                </div>
+                <button class="btn-hijau" id="btn-tambah">
+                    <i class="fa-solid fa-plus"></i> Tambah Produk
+                </button>
+            </div>
+
+            <div class="panel">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Foto</th>
+                            <th>Nama</th>
+                            <th>Kalori</th>
+                            <th>Harga</th>
+                            <th>Grup</th>
+                            <th>Best Seller</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-produk"></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modal-produk">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="judul-modal">Tambah Produk</h2>
+                <button type="button" class="btn-x" data-tutup><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form id="form-produk">
+                <div class="form-grup">
+                    <label for="input-nama">Nama Produk</label>
+                    <input type="text" id="input-nama" required>
+                </div>
+                <div class="form-grup">
+                    <label for="input-kalori">Kalori</label>
+                    <input type="text" id="input-kalori" placeholder="250 - 350 kkal" required>
+                </div>
+                <div class="form-grup">
+                    <label for="input-harga">Harga (Rp)</label>
+                    <input type="number" id="input-harga" min="0" required>
+                </div>
+                <div class="form-grup">
+                    <label for="input-gambar">Path Gambar</label>
+                    <input type="text" id="input-gambar" list="daftar-gambar" placeholder="gambar/salad.jpg" required>
+                    <datalist id="daftar-gambar">
+                        <option value="gambar/avocado_smoothies.jpg">
+                        <option value="gambar/cake_wortel.webp">
+                        <option value="gambar/grain_bowl.jpg">
+                        <option value="gambar/kebab_daging.webp">
+                        <option value="gambar/kebab_sayur.jpg">
+                        <option value="gambar/mie_bayam.jpg">
+                        <option value="gambar/mix_berry_smoothies.jpg">
+                        <option value="gambar/oatmeal.jpg">
+                        <option value="gambar/pasta_ayam.jpg">
+                        <option value="gambar/roti_salmon.jpg">
+                        <option value="gambar/salad.jpg">
+                        <option value="gambar/salad_buah.jpg">
+                        <option value="gambar/salmon_panggang.jpg">
+                        <option value="gambar/sarapan_sehat.jpg">
+                        <option value="gambar/steak_jamur.jpg">
+                        <option value="gambar/steak_tempe.webp">
+                        <option value="gambar/strawberry smoothies.jpg">
+                        <option value="gambar/sup_ayam.jpg">
+                    </datalist>
+                </div>
+                <div class="form-grup">
+                    <label for="input-grup">Grup Kartu (opsional)</label>
+                    <input type="text" id="input-grup" placeholder="sarapan">
+                    <small>Menu dengan nama grup yang sama tampil dalam satu kartu.</small>
+                </div>
+                <div class="form-grup form-checkbox">
+                    <input type="checkbox" id="input-best">
+                    <label for="input-best">Tampilkan label Best Seller</label>
+                </div>
+
+                <div class="form-aksi">
+                    <button type="button" class="btn-batal" data-tutup>Batal</button>
+                    <button type="submit" class="btn-hijau">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../data.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/produk.js"></script>
+</body>
+</html>

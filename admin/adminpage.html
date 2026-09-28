@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/adminstyle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Dashboard - Admin HealthyFood</title>
+</head>
+
+<body>
+    <div class="admin-wrapper">
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <main class="admin-content">
+            <div class="admin-topbar">
+                <div>
+                    <h1>Dashboard</h1>
+                    <p>Ringkasan aktivitas restoran Anda.</p>
+                </div>
+            </div>
+
+            <div class="grid-stat">
+                <div class="kartu-stat">
+                    <div class="ikon"><i class="fa-solid fa-bowl-food"></i></div>
+                    <div>
+                        <p class="angka" id="stat-produk">0</p>
+                        <p class="label">Total Produk</p>
+                    </div>
+                </div>
+                <div class="kartu-stat">
+                    <div class="ikon"><i class="fa-solid fa-receipt"></i></div>
+                    <div>
+                        <p class="angka" id="stat-pesanan">0</p>
+                        <p class="label">Total Pesanan</p>
+                    </div>
+                </div>
+                <div class="kartu-stat">
+                    <div class="ikon"><i class="fa-solid fa-truck-fast"></i></div>
+                    <div>
+                        <p class="angka" id="stat-katering">0</p>
+                        <p class="label">Paket Katering</p>
+                    </div>
+                </div>
+                <div class="kartu-stat">
+                    <div class="ikon"><i class="fa-solid fa-sack-dollar"></i></div>
+                    <div>
+                        <p class="angka" id="stat-pendapatan">Rp 0</p>
+                        <p class="label">Total Pendapatan</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Pesanan Terbaru</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No. Pesanan</th>
+                            <th>Tanggal</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-terbaru"></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="../data.js"></script>
+    <script src="js/adminscript.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

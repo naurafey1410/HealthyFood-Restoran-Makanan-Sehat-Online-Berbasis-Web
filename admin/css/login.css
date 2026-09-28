@@ -1,0 +1,120 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #f4f8eb;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #333;
+}
+
+a {
+    text-decoration: none;
+}
+
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, #d8ef9a 0%, #f4f8eb 45%, #ffffff 100%);
+    padding: 20px;
+}
+
+.login-box {
+    background: white;
+    border-radius: 20px;
+    padding: 40px 35px;
+    width: 380px;
+    max-width: 100%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+    text-align: center;
+}
+
+.ikon-login {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #d8ef9a;
+    color: #0f5508;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px auto;
+}
+
+.login-box h1 {
+    font-size: 19px;
+    color: #1B4D20;
+    margin: 0 0 4px 0;
+}
+
+.subjudul {
+    font-size: 13px;
+    color: #888;
+    margin: 0 0 25px 0;
+}
+
+.form-grup {
+    text-align: left;
+    margin-bottom: 14px;
+}
+
+.form-grup label {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-grup input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: inherit;
+}
+
+.form-grup input:focus {
+    outline: none;
+    border-color: #7DAA1E;
+}
+
+.pesan-error {
+    color: #c0392b;
+    font-size: 12px;
+    margin: -6px 0 14px 0;
+    min-height: 14px;
+    text-align: left;
+}
+
+.btn-login {
+    width: 100%;
+    background: #0f5508;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-login:hover {
+    background: #146e0b;
+}
+
+.login-hint {
+    margin-top: 18px;
+    font-size: 11px;
+    color: #aaa;
+}
+
+.login-hint a {
+    color: #0f5508;
+}

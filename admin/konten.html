@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Konten - Admin HealthyFood</title>
+</head>
+
+<body>
+    <div class="admin-wrapper">
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <main class="admin-content">
+            <div class="admin-topbar">
+                <div>
+                    <h1>Kelola Konten</h1>
+                    <p>Ubah teks header di halaman customer.</p>
+                </div>
+            </div>
+
+            <div class="panel" style="max-width: 560px;">
+                <h2>Teks Header</h2>
+
+                <form id="form-konten">
+                    <div class="form-grup">
+                        <label for="input-pembuka">Tulisan Sapaan</label>
+                        <input type="text" id="input-pembuka" required>
+                    </div>
+                    <div class="form-grup">
+                        <label for="input-slogan">Slogan</label>
+                        <textarea id="input-slogan" required></textarea>
+                        <small>Tekan Enter untuk pindah baris.</small>
+                    </div>
+
+                    <button type="submit" class="btn-hijau">
+                        <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
+                    </button>
+
+                    <p class="pesan-sukses" id="pesan-sukses">Perubahan tersimpan dan langsung tampil di halaman customer.</p>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="../data.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/konten.js"></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Pesanan - Admin HealthyFood</title>
+</head>
+
+<body>
+    <div class="admin-wrapper">
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <main class="admin-content">
+            <div class="admin-topbar">
+                <div>
+                    <h1>Pesanan Masuk</h1>
+                    <p>Pesanan dari halaman customer muncul di sini.</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No. Pesanan</th>
+                            <th>Tanggal</th>
+                            <th>Item</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-pesanan"></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modal-detail">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="judul-detail">Detail Pesanan</h2>
+                <button type="button" class="btn-x" data-tutup><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="isi-detail"></div>
+        </div>
+    </div>
+
+    <script src="../data.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/pesanan.js"></script>
+</body>
+</html>

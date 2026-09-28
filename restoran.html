@@ -112,6 +112,23 @@
 
         <div class="keranjang-footer">
 
+            <div id="form-pengiriman" class="form-pengiriman">
+                <div class="form-group">
+                    <label for="input-nama">Nama Pemesan:</label>
+                    <input type="text" id="input-nama" placeholder="Masukkan nama Anda...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="input-telp">Nomor Telepon:</label>
+                    <input type="tel" id="input-telp" placeholder="Contoh: 08123456789">
+                </div>
+
+                <div class="form-group">
+                    <label for="input-alamat">Alamat Lengkap:</label>
+                    <textarea id="input-alamat" placeholder="Masukkan alamat pengiriman..." rows="2"></textarea>
+                </div>
+            </div>
+
             <div class="total">
 
                 <span>Total</span>
@@ -133,7 +150,22 @@
         <a href="admin/login.html" class="link-admin">Admin</a>
     </footer>
 
+    <!-- POP UP ORDER DITERIMA (harus di atas script) -->
+    <div id="order-diterima" class="order-overlay">
+        <div class="order-card">
+            <button id="tutup-order-diterima" class="btn-tutup-order" aria-label="Tutup">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="order-icon">🌱</div>
+            <h3>Order Diterima!</h3>
+            <p class="order-terima-kasih">Terima kasih telah memesan di Healthy Restaurant.</p>
+            <div id="info-detail-pesanan"></div>
+            <button id="btn-tutup-ok" class="btn-checkout">Tutup</button>
+        </div>
+    </div>
+
     <script src="data.js"></script>
     <script src="script.js"></script>
+
 </body>
 </html>

@@ -172,9 +172,29 @@ btnKatering.addEventListener("click", function (event) {
     alert(teks + "Silakan hubungi restoran untuk informasi lebih lanjut.");
 });
 
+// ===== CHECKOUT (hanya satu listener) =====
 btnCheckout.addEventListener("click", function () {
     if (keranjang.length === 0) {
         alert("Keranjang masih kosong. Silakan pilih makanan terlebih dahulu.");
+        return;
+    }
+
+    const formPengiriman = document.getElementById("form-pengiriman");
+
+    // Klik pertama: munculkan form
+    if (!formPengiriman.classList.contains("aktif")) {
+        formPengiriman.classList.add("aktif");
+        btnCheckout.textContent = "Konfirmasi Pesanan";
+        return;
+    }
+
+    // Klik kedua: validasi lalu konfirmasi
+    const nama = document.getElementById("input-nama").value.trim();
+    const telp = document.getElementById("input-telp").value.trim();
+    const alamat = document.getElementById("input-alamat").value.trim();
+
+    if (nama === "" || telp === "" || alamat === "") {
+        alert("Mohon lengkapi Nama, Nomor Telepon, dan Alamat pengiriman terlebih dahulu! 🌱");
         return;
     }
 
@@ -185,16 +205,69 @@ btnCheckout.addEventListener("click", function () {
 
     const pesanan = buatPesanan(keranjang, total);
 
-    alert(
-        "Pesanan berhasil dibuat! 🌱\n\n" +
-        "Nomor pesanan: #" + pesanan.id + "\n" +
-        "Total pembayaran: " + formatRupiah(total) + "\n\n" +
-        "Terima kasih telah memesan."
-    );
+    // Desain pesanan: daftar menu yang dipesan
+    const daftarItem = keranjang.map(function (item) {
+        return `
+            <div class="ringkasan-item">
+                <span>${esc(item.nama)} <small>x${item.jumlah}</small></span>
+                <strong>${formatRupiah(item.harga * item.jumlah)}</strong>
+            </div>`;
+    }).join("");
 
+    document.getElementById("info-detail-pesanan").innerHTML = `
+        <div class="ringkasan-pesanan">
+            <div class="ringkasan-nomor">Pesanan #${esc(String(pesanan.id))}</div>
+
+            <div class="ringkasan-data">
+                <p><b>Nama</b> ${esc(nama)}</p>
+                <p><b>Telepon</b> ${esc(telp)}</p>
+                <p><b>Alamat</b> ${esc(alamat)}</p>
+            </div>
+
+            <div class="ringkasan-daftar">${daftarItem}</div>
+
+            <div class="ringkasan-total">
+                <span>Total</span>
+                <strong>${formatRupiah(total)}</strong>
+            </div>
+        </div>`;
+
+    bukaOrderDiterima();
+
+    // Reset keranjang & form
     keranjang = [];
+    formPengiriman.classList.remove("aktif");
+    btnCheckout.textContent = "Pesan Sekarang";
+    document.getElementById("input-nama").value = "";
+    document.getElementById("input-telp").value = "";
+    document.getElementById("input-alamat").value = "";
+
     tampilkanKeranjang();
     tutupKeranjang();
+});
+
+// ===== POP UP ORDER DITERIMA =====
+const orderDiterimaEl = document.getElementById("order-diterima");
+
+function bukaOrderDiterima() {
+    orderDiterimaEl.classList.add("aktif");
+}
+
+function tutupOrderDiterima() {
+    orderDiterimaEl.classList.remove("aktif");
+}
+
+document.getElementById("tutup-order-diterima").addEventListener("click", tutupOrderDiterima);
+document.getElementById("btn-tutup-ok").addEventListener("click", tutupOrderDiterima);
+
+// Klik area gelap di luar card
+orderDiterimaEl.addEventListener("click", function (event) {
+    if (event.target === orderDiterimaEl) tutupOrderDiterima();
+});
+
+// Tombol Esc
+document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") tutupOrderDiterima();
 });
 
 renderKonten();

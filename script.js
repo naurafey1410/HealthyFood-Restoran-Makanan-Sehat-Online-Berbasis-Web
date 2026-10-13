@@ -62,10 +62,10 @@ function kartu(p) {
             <img src="${esc(p.gambar)}" alt="${esc(p.nama)}">
             <div class="card-content">
                 <h3>${esc(p.nama)}</h3>
-                <p>${esc(p.kalori)}</p>
                 <span>${formatRupiah(p.harga)}</span>
+                <p>${esc(p.kalori)}</p>
                 <div class="best${p.best ? "" : " kosong"}">Best Seller</div>
-                <button class="btn-pesan" data-id="${p.id}">Pesan</button>
+                <button class="btn-pesan" data-id="${p.id}">Order</button>
             </div>
         </div>`;
 }
@@ -80,8 +80,8 @@ function kartuGrup(items) {
                     <div class="triple-item">
                         <div>
                             <h3>${esc(p.nama)}</h3>
-                            <p>${esc(p.kalori)}</p>
                             <span>${formatRupiah(p.harga)}</span>
+                            <p>${esc(p.kalori)}</p>
                         </div>
                         <button class="btn-pesan" data-id="${p.id}">Pesan</button>
                     </div>`;

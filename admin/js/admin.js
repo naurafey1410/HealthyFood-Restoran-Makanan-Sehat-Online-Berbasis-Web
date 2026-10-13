@@ -8,7 +8,6 @@ const MENU_ADMIN = [
     ["dashboard.html", "fa-gauge", "Dashboard"],
     ["produk.html", "fa-bowl-food", "Produk"],
     ["pesanan.html", "fa-receipt", "Pesanan"],
-    ["katering.html", "fa-truck-fast", "Katering"],
     ["konten.html", "fa-pen-to-square", "Konten"]
 ];
 
@@ -32,6 +31,9 @@ document.getElementById("sidebar").innerHTML = `
         <a href="../restoran.html" target="_blank">
             <i class="fa-solid fa-arrow-up-right-from-square"></i> <span>Lihat Website</span>
         </a>
+        <button class="btn-reset" id="btn-reset" title="Kembalikan produk, pesanan, dan konten ke data awal">
+            <i class="fa-solid fa-rotate-left"></i> <span>Reset Data Demo</span>
+        </button>
         <button class="btn-logout" id="btn-logout">
             <i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>
         </button>
@@ -40,6 +42,16 @@ document.getElementById("sidebar").innerHTML = `
 document.getElementById("btn-logout").addEventListener("click", function () {
     sessionStorage.removeItem(SESSION_KEY);
     window.location.href = "login.html";
+});
+
+document.getElementById("btn-reset").addEventListener("click", function () {
+    const yakin = confirm(
+        "Reset data demo?\n\nSemua produk, pesanan, konten, dan keranjang akan dikembalikan ke data awal. Tindakan ini tidak bisa dibatalkan."
+    );
+    if (!yakin) return;
+
+    resetDataDemo();
+    window.location.reload();
 });
 
 function bukaModal(id) {
@@ -61,4 +73,8 @@ function nilai(id) {
 
 function badgeStatus(status) {
     return `<span class="badge ${status === "Selesai" ? "status-selesai" : "status-baru"}">${esc(status)}</span>`;
+}
+
+function badgeBayar(status) {
+    return `<span class="badge ${kelasBayar(status)}">${esc(status)}</span>`;
 }

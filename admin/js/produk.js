@@ -1,9 +1,45 @@
 const tabel = document.getElementById("tabel-produk");
 const form = document.getElementById("form-produk");
+const gridGambar = document.getElementById("pilih-gambar");
+const inputGambar = document.getElementById("input-gambar");
+const pesanGambar = document.getElementById("pesan-gambar");
 let idEdit = null;
 
+// Tampilkan thumbnail gambar; gambar produk lama di luar daftar tetap ikut tampil agar tidak hilang
+function renderPilihanGambar(terpilih) {
+    const daftar = DAFTAR_GAMBAR.slice();
+    if (terpilih && !daftar.includes(terpilih)) daftar.unshift(terpilih);
+
+    inputGambar.value = terpilih || "";
+    pesanGambar.classList.remove("error");
+
+    gridGambar.innerHTML = daftar.map(function (path) {
+        const nama = path.split("/").pop().replace(/\.[^.]+$/, "").replace(/[_-]/g, " ");
+        return `
+            <button type="button" class="pilih-gambar${path === terpilih ? " terpilih" : ""}" data-gambar="${esc(path)}" title="${esc(nama)}">
+                <img src="../${esc(path)}" alt="${esc(nama)}" loading="lazy">
+                <i class="fa-solid fa-check"></i>
+            </button>`;
+    }).join("");
+}
+
+gridGambar.addEventListener("click", function (event) {
+    const tombol = event.target.closest("[data-gambar]");
+    if (!tombol) return;
+
+    inputGambar.value = tombol.getAttribute("data-gambar");
+    pesanGambar.classList.remove("error");
+
+    gridGambar.querySelectorAll(".pilih-gambar").forEach(function (el) {
+        el.classList.toggle("terpilih", el === tombol);
+    });
+});
+
 function render() {
-    const list = Produk.semua();
+    // Urutan sama dengan menu customer: best seller di atas
+    const semua = Produk.semua();
+    const list = semua.filter(function (p) { return p.best; })
+        .concat(semua.filter(function (p) { return !p.best; }));
 
     tabel.innerHTML = list.length
         ? list.map(function (p) {
@@ -31,12 +67,19 @@ function render() {
 document.getElementById("btn-tambah").addEventListener("click", function () {
     idEdit = null;
     form.reset();
+    renderPilihanGambar("");
     document.getElementById("judul-modal").textContent = "Tambah Produk";
     bukaModal("modal-produk");
 });
 
 form.addEventListener("submit", function (event) {
     event.preventDefault();
+
+    if (!inputGambar.value) {
+        pesanGambar.textContent = "Pilih satu gambar untuk produk ini.";
+        pesanGambar.classList.add("error");
+        return;
+    }
 
     const data = {
         nama: nilai("input-nama"),
@@ -71,7 +114,7 @@ tabel.addEventListener("click", function (event) {
         document.getElementById("input-nama").value = p.nama;
         document.getElementById("input-kalori").value = p.kalori;
         document.getElementById("input-harga").value = p.harga;
-        document.getElementById("input-gambar").value = p.gambar;
+        renderPilihanGambar(p.gambar);
         document.getElementById("input-grup").value = p.grup || "";
         document.getElementById("input-best").checked = !!p.best;
         bukaModal("modal-produk");

@@ -1,7 +1,7 @@
+/*RESET & DASAR*/
 * {
     box-sizing: border-box;
 }
-
 body {
     margin: 0;
     background: #f4f8eb;
@@ -13,11 +13,11 @@ a {
     text-decoration: none;
 }
 
+/*LAYOUT UTAMA (SIDEBAR + KONTEN)*/
 .admin-wrapper {
     display: flex;
     min-height: 100vh;
 }
-
 .sidebar {
     width: 230px;
     background: #0f5508;
@@ -139,6 +139,7 @@ a {
     font-size: 13px;
 }
 
+/*TOMBOL*/
 .btn-hijau {
     background: #0f5508;
     color: white;
@@ -175,6 +176,7 @@ a {
     background: #e5e5e5;
 }
 
+/*KARTU STATISTIK (DASHBOARD)*/
 .grid-stat {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -218,6 +220,7 @@ a {
     margin: 2px 0 0 0;
 }
 
+/*PANEL & TABEL*/
 .panel {
     background: white;
     border-radius: 16px;
@@ -266,6 +269,7 @@ tbody tr:hover {
     display: block;
 }
 
+/*BADGE STATUS*/
 .badge {
     display: inline-block;
     padding: 4px 10px;
@@ -284,6 +288,7 @@ tbody tr:hover {
     color: #1B4D20;
 }
 
+/*TOMBOL AKSI DI TABEL (EDIT/HAPUS)*/
 .btn-aksi {
     border: none;
     background: #f1f5ea;
@@ -305,6 +310,7 @@ tbody tr:hover {
     color: #c0392b;
 }
 
+/*MODAL (POPUP FORM)*/
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -357,6 +363,7 @@ tbody tr:hover {
     cursor: pointer;
 }
 
+/*FORM (INPUT DI DALAM MODAL)*/
 .form-grup {
     margin-bottom: 14px;
 }
@@ -418,6 +425,7 @@ tbody tr:hover {
     margin-top: 20px;
 }
 
+/*DETAIL PESANAN*/
 .detail-list {
     list-style: none;
     padding: 0;
@@ -439,6 +447,7 @@ tbody tr:hover {
     color: #1B4D20;
 }
 
+/*PESAN SUKSES (HALAMAN KONTEN)*/
 .pesan-sukses {
     display: none;
     background: #d8ef9a;
@@ -449,6 +458,7 @@ tbody tr:hover {
     margin-top: 15px;
 }
 
+/*RESPONSIVE (LAYAR KECIL)*/
 @media (max-width: 900px) {
     .sidebar {
         width: 70px;
@@ -477,4 +487,149 @@ tbody tr:hover {
     .grid-stat {
         grid-template-columns: 1fr;
     }
+}
+
+/*BADGE STATUS PEMBAYARAN*/
+.bayar-belum {
+    background: #fde8e8;
+    color: #b03a2e;
+}
+
+.bayar-menunggu {
+    background: #fff3cd;
+    color: #8a6d00;
+}
+
+.bayar-lunas {
+    background: #d8ef9a;
+    color: #1B4D20;
+}
+
+.btn-aksi.lunas {
+    background: #e3f4c4;
+}
+
+.btn-aksi.lunas:hover {
+    background: #b9de6a;
+}
+
+.kolom-aksi {
+    white-space: nowrap;
+}
+
+.teks-kecil {
+    color: #888;
+    font-size: 11px;
+}
+
+/*DETAIL PEMBELI (MODAL PESANAN)*/
+.detail-tanggal {
+    margin: 0 0 12px 0;
+    font-size: 12px;
+    color: #888;
+}
+
+.detail-pembeli {
+    margin-bottom: 15px;
+    padding: 12px;
+    border-radius: 10px;
+    background: #f4f8eb;
+}
+
+.detail-pembeli p {
+    margin: 0 0 6px 0;
+    font-size: 13px;
+    color: #444;
+    word-break: break-word;
+}
+
+.detail-pembeli p:last-child {
+    margin-bottom: 0;
+}
+
+.detail-pembeli b {
+    display: inline-block;
+    min-width: 80px;
+    color: #1B4D20;
+}
+
+/* Pilih foto produk lewat thumbnail */
+.pilih-gambar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    gap: 8px;
+    max-height: 210px;
+    overflow-y: auto;
+    padding: 4px;
+    border: 1px solid #dfe6dc;
+    border-radius: 10px;
+    background: #fafcf8;
+}
+
+.pilih-gambar {
+    position: relative;
+    aspect-ratio: 1;
+    padding: 0;
+    border: 3px solid transparent;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #eee;
+    cursor: pointer;
+}
+
+.pilih-gambar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.pilih-gambar:hover {
+    border-color: #a9cf6a;
+}
+
+.pilih-gambar.terpilih {
+    border-color: #1B4D20;
+}
+
+.pilih-gambar i {
+    display: none;
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 18px;
+    height: 18px;
+    padding: 3px;
+    border-radius: 50%;
+    background: #1B4D20;
+    color: #fff;
+    box-sizing: content-box;
+    font-size: 12px;
+}
+
+.pilih-gambar.terpilih i {
+    display: block;
+}
+
+.pesan-gambar.error {
+    color: #b03a2e;
+    font-weight: bold;
+}
+
+/* Tombol reset data demo di sidebar (gaya sama dengan tombol logout) */
+.btn-reset {
+    color: #ffe9a8;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.btn-reset:hover {
+    color: #ffd24d;
 }

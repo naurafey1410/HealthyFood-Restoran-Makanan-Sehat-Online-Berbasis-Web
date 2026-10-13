@@ -64,28 +64,10 @@
                     <input type="number" id="input-harga" min="0" required>
                 </div>
                 <div class="form-grup">
-                    <label for="input-gambar">Path Gambar</label>
-                    <input type="text" id="input-gambar" list="daftar-gambar" placeholder="gambar/salad.jpg" required>
-                    <datalist id="daftar-gambar">
-                        <option value="gambar/avocado_smoothies.jpg">
-                        <option value="gambar/cake_wortel.webp">
-                        <option value="gambar/grain_bowl.jpg">
-                        <option value="gambar/kebab_daging.webp">
-                        <option value="gambar/kebab_sayur.jpg">
-                        <option value="gambar/mie_bayam.jpg">
-                        <option value="gambar/mix_berry_smoothies.jpg">
-                        <option value="gambar/oatmeal.jpg">
-                        <option value="gambar/pasta_ayam.jpg">
-                        <option value="gambar/roti_salmon.jpg">
-                        <option value="gambar/salad.jpg">
-                        <option value="gambar/salad_buah.jpg">
-                        <option value="gambar/salmon_panggang.jpg">
-                        <option value="gambar/sarapan_sehat.jpg">
-                        <option value="gambar/steak_jamur.jpg">
-                        <option value="gambar/steak_tempe.webp">
-                        <option value="gambar/strawberry smoothies.jpg">
-                        <option value="gambar/sup_ayam.jpg">
-                    </datalist>
+                    <label>Foto Produk</label>
+                    <input type="hidden" id="input-gambar">
+                    <div class="pilih-gambar-grid" id="pilih-gambar"></div>
+                    <small class="pesan-gambar" id="pesan-gambar">Klik salah satu gambar untuk memilih.</small>
                 </div>
                 <div class="form-grup">
                     <label for="input-grup">Grup Kartu (opsional)</label>
@@ -105,8 +87,8 @@
         </div>
     </div>
 
-    <script src="../data.js"></script>
-    <script src="js/admin.js"></script>
-    <script src="js/produk.js"></script>
+    <script src="../data.js?v=3"></script>
+    <script src="js/admin.js?v=3"></script>
+    <script src="js/produk.js?v=3"></script>
 </body>
 </html>

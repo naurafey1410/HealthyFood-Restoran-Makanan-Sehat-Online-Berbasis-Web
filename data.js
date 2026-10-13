@@ -1,9 +1,31 @@
 const KEY = {
     produk: "hf_produk",
     pesanan: "hf_pesanan",
-    katering: "hf_katering",
-    konten: "hf_konten"
+    konten: "hf_konten",
+    keranjang: "hf_keranjang"
 };
+
+// Gambar yang bisa dipilih admin sebagai foto produk (tampil sebagai thumbnail)
+const DAFTAR_GAMBAR = [
+    "gambar/salad.jpg",
+    "gambar/salad_buah.jpg",
+    "gambar/steak_tempe.webp",
+    "gambar/steak_jamur.jpg",
+    "gambar/mie_bayam.jpg",
+    "gambar/kebab_sayur.jpg",
+    "gambar/kebab_daging.webp",
+    "gambar/sup_ayam.jpg",
+    "gambar/grain_bowl.jpg",
+    "gambar/salmon_panggang.jpg",
+    "gambar/roti_salmon.jpg",
+    "gambar/pasta_ayam.jpg",
+    "gambar/sarapan_sehat.jpg",
+    "gambar/oatmeal.jpg",
+    "gambar/cake_wortel.webp",
+    "gambar/avocado_smoothies.jpg",
+    "gambar/mix_berry_smoothies.jpg",
+    "gambar/strawberry smoothies.jpg"
+];
 
 const PRODUK_AWAL = [
     { id: 1, nama: "Vegetable Salad", kalori: "250 - 350 kkal", harga: 22000, gambar: "gambar/salad.jpg", grup: "", best: true },
@@ -21,11 +43,6 @@ const PRODUK_AWAL = [
     { id: 13, nama: "Avocado Toast", kalori: "220 - 300 kkal", harga: 22000, gambar: "gambar/sarapan_sehat.jpg", grup: "sarapan", best: false },
     { id: 14, nama: "Oatmeal Fruit Bowl", kalori: "280 - 350 kkal", harga: 26000, gambar: "gambar/sarapan_sehat.jpg", grup: "sarapan", best: false },
     { id: 15, nama: "Egg & Toast Combo", kalori: "320 - 400 kkal", harga: 28000, gambar: "gambar/sarapan_sehat.jpg", grup: "sarapan", best: false }
-];
-
-const KATERING_AWAL = [
-    { id: 1, nama: "Paket Kantor", deskripsi: "Katering harian untuk kebutuhan kantor, minimal 10 porsi.", harga: 25000 },
-    { id: 2, nama: "Paket Acara", deskripsi: "Katering untuk acara, ulang tahun, dan gathering dengan menu yang bisa disesuaikan.", harga: 35000 }
 ];
 
 const KONTEN_AWAL = {
@@ -68,17 +85,81 @@ function crud(key, awal) {
 }
 
 const Produk = crud(KEY.produk, PRODUK_AWAL);
-const Katering = crud(KEY.katering, KATERING_AWAL);
-const Pesanan = crud(KEY.pesanan, []);
 
-function buatPesanan(items, total) {
+/* ===== PESANAN & PEMBAYARAN ===== */
+
+const STATUS_BAYAR = {
+    BELUM: "Belum Dibayar",
+    MENUNGGU: "Menunggu Verifikasi",
+    LUNAS: "Lunas"
+};
+
+// Ganti data rekening dan gambar QRIS di sini sesuai data restoran
+const INFO_PEMBAYARAN = {
+    Transfer: { label: "Transfer Bank", bank: "Bank Mandiri", rekening: "1234567890", atasNama: "Healthy Restaurant" },
+    QRIS: { label: "QRIS", gambar: "gambar/qris.png" }
+};
+
+// Pesanan lama (tanpa data pembeli/pembayaran) diberi nilai default agar tidak error
+function normalisasiPesanan(p) {
+    return {
+        ...p,
+        items: p.items || [],
+        pembeli: p.pembeli || { nama: "-", telp: "-", alamat: "-" },
+        metode: p.metode || "-",
+        statusBayar: p.statusBayar || STATUS_BAYAR.BELUM
+    };
+}
+
+const Pesanan = crud(KEY.pesanan, []);
+const semuaPesananMentah = Pesanan.semua.bind(Pesanan);
+Pesanan.semua = function () {
+    return semuaPesananMentah().map(normalisasiPesanan);
+};
+
+function buatPesanan(items, total, pembeli, metode) {
     return Pesanan.tambah({
         tanggal: new Date().toISOString(),
         items: items,
         total: total,
-        status: "Baru"
+        pembeli: pembeli,
+        metode: metode,
+        status: "Baru",
+        statusBayar: STATUS_BAYAR.BELUM
     });
 }
+
+function cariPesanan(id) {
+    return Pesanan.semua().find(function (p) { return p.id === id; }) || null;
+}
+
+function ubahStatusBayar(id, status) {
+    Pesanan.ubah(id, { statusBayar: status });
+}
+
+function jumlahPorsi(items) {
+    return items.reduce(function (sum, i) { return sum + i.jumlah; }, 0);
+}
+
+function kelasBayar(status) {
+    if (status === STATUS_BAYAR.LUNAS) return "bayar-lunas";
+    if (status === STATUS_BAYAR.MENUNGGU) return "bayar-menunggu";
+    return "bayar-belum";
+}
+
+// Event "storage" hanya terpicu di tab lain, sehingga customer dan admin saling sinkron
+// Hapus semua data demo (produk, pesanan, konten, keranjang) agar kembali ke data awal
+function resetDataDemo() {
+    Object.values(KEY).forEach(function (key) { localStorage.removeItem(key); });
+}
+
+function pantauData(callback) {
+    window.addEventListener("storage", function (event) {
+        if (event.key === null || Object.values(KEY).includes(event.key)) callback();
+    });
+}
+
+/* ===== KONTEN ===== */
 
 function getKonten() {
     return baca(KEY.konten, KONTEN_AWAL);
@@ -92,6 +173,13 @@ function esc(teks) {
     return String(teks).replace(/[&<>"']/g, function (c) {
         return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
+}
+
+// Teks pendek status bayar untuk navbar customer
+function labelBayarSingkat(status) {
+    if (status === STATUS_BAYAR.LUNAS) return "Lunas";
+    if (status === STATUS_BAYAR.MENUNGGU) return "Verifikasi";
+    return "Belum bayar";
 }
 
 function formatRupiah(angka) {

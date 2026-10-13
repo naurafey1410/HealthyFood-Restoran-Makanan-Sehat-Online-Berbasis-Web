@@ -1,4 +1,44 @@
-let keranjang = [];
+const KEY_AKTIF = "hf_pesanan_aktif";
+
+const KEY_KERANJANG = KEY.keranjang;
+
+// Baca keranjang tersimpan, lalu cocokkan dengan menu terbaru (produk yang sudah dihapus admin dibuang)
+function muatKeranjang() {
+    let tersimpan = [];
+    try {
+        const data = JSON.parse(localStorage.getItem(KEY_KERANJANG));
+        if (Array.isArray(data)) tersimpan = data;
+    } catch (e) {
+        tersimpan = [];
+    }
+
+    const produk = Produk.semua();
+    const hasil = [];
+
+    tersimpan.forEach(function (item) {
+        const p = item && produk.find(function (x) { return x.id === item.id; });
+        const jumlah = Math.floor(Number(item && item.jumlah));
+        if (!p || !(jumlah > 0)) return;
+        hasil.push({ id: p.id, nama: p.nama, harga: p.harga, jumlah: jumlah });
+    });
+
+    return hasil;
+}
+
+function simpanKeranjang() {
+    try {
+        if (keranjang.length === 0) {
+            localStorage.removeItem(KEY_KERANJANG);
+        } else {
+            localStorage.setItem(KEY_KERANJANG, JSON.stringify(keranjang));
+        }
+    } catch (e) {
+        // penyimpanan penuh/diblokir: keranjang tetap jalan, hanya tidak tersimpan
+    }
+}
+
+let keranjang = muatKeranjang();
+let pesananAktifId = Number(sessionStorage.getItem(KEY_AKTIF)) || null;
 
 const menuContainer = document.getElementById("menu-container");
 const btnKeranjang = document.getElementById("btn-keranjang");
@@ -9,7 +49,6 @@ const isiKeranjang = document.getElementById("isi-keranjang");
 const jumlahKeranjang = document.getElementById("jumlah-keranjang");
 const totalHarga = document.getElementById("total-harga");
 const btnCheckout = document.getElementById("btn-checkout");
-const btnKatering = document.getElementById("btn-katering");
 
 function renderKonten() {
     const konten = getKonten();
@@ -51,18 +90,34 @@ function kartuGrup(items) {
         </div>`;
 }
 
+// Best seller tampil paling atas, non-best seller di bawahnya (urutan di tiap kelompok tetap)
+function urutkanBestSeller(list) {
+    return list.filter(function (x) { return x.best; })
+        .concat(list.filter(function (x) { return !x.best; }));
+}
+
 function renderMenu() {
     const produk = Produk.semua();
     const sudah = [];
+    const daftarKartu = [];
 
-    menuContainer.innerHTML = produk.map(function (p) {
-        if (!p.grup) return kartu(p);
-        if (sudah.includes(p.grup)) return "";
+    produk.forEach(function (p) {
+        if (!p.grup) {
+            daftarKartu.push({ best: !!p.best, html: kartu(p) });
+            return;
+        }
+        if (sudah.includes(p.grup)) return;
 
         sudah.push(p.grup);
         const items = produk.filter(function (x) { return x.grup === p.grup; });
-        return items.length > 1 ? kartuGrup(items) : kartu(p);
-    }).join("");
+
+        // Kartu grup dianggap best seller jika salah satu anggotanya best seller
+        daftarKartu.push(items.length > 1
+            ? { best: items.some(function (x) { return x.best; }), html: kartuGrup(items) }
+            : { best: !!p.best, html: kartu(p) });
+    });
+
+    menuContainer.innerHTML = urutkanBestSeller(daftarKartu).map(function (k) { return k.html; }).join("");
 }
 
 menuContainer.addEventListener("click", function (event) {
@@ -86,6 +141,8 @@ menuContainer.addEventListener("click", function (event) {
 });
 
 function tampilkanKeranjang() {
+    simpanKeranjang();
+
     if (keranjang.length === 0) {
         isiKeranjang.innerHTML = `<p class="keranjang-kosong">Keranjang masih kosong 🌱</p>`;
         jumlahKeranjang.textContent = "0";
@@ -155,25 +212,7 @@ btnKeranjang.addEventListener("click", function (event) {
 btnTutupKeranjang.addEventListener("click", tutupKeranjang);
 overlay.addEventListener("click", tutupKeranjang);
 
-btnKatering.addEventListener("click", function (event) {
-    event.preventDefault();
-
-    const paket = Katering.semua();
-    let teks = "Layanan Katering 🌱\n\n";
-
-    if (paket.length === 0) {
-        teks += "Belum ada paket katering tersedia saat ini.\n\n";
-    } else {
-        paket.forEach(function (p) {
-            teks += "• " + p.nama + " - " + formatRupiah(p.harga) + "/porsi\n  " + p.deskripsi + "\n\n";
-        });
-    }
-
-    alert(teks + "Silakan hubungi restoran untuk informasi lebih lanjut.");
-});
-
-<<<<<<< HEAD
-// ===== CHECKOUT (hanya satu listener) =====
+// ===== CHECKOUT =====
 btnCheckout.addEventListener("click", function () {
     if (keranjang.length === 0) {
         alert("Keranjang masih kosong. Silakan pilih makanan terlebih dahulu.");
@@ -189,68 +228,33 @@ btnCheckout.addEventListener("click", function () {
         return;
     }
 
-    // Klik kedua: validasi lalu konfirmasi
+    // Klik kedua: validasi lalu simpan pesanan
     const nama = document.getElementById("input-nama").value.trim();
     const telp = document.getElementById("input-telp").value.trim();
     const alamat = document.getElementById("input-alamat").value.trim();
+    const pilihan = document.querySelector('input[name="metode"]:checked');
 
     if (nama === "" || telp === "" || alamat === "") {
         alert("Mohon lengkapi Nama, Nomor Telepon, dan Alamat pengiriman terlebih dahulu! 🌱");
-=======
-btnCheckout.addEventListener("click", function () {
-    if (keranjang.length === 0) {
-        alert("Keranjang masih kosong. Silakan pilih makanan terlebih dahulu.");
->>>>>>> 5eb1798 (update prjek penambahan fitur pembayaran)
         return;
     }
 
-    let total = 0;
-    keranjang.forEach(function (item) {
-        total += item.harga * item.jumlah;
-    });
-<<<<<<< HEAD
-=======
+    if (!/^\+?[0-9]{8,15}$/.test(telp.replace(/[\s-]/g, ""))) {
+        alert("Nomor telepon tidak valid. Contoh: 08123456789");
+        return;
+    }
 
-    const pesanan = buatPesanan(keranjang, total);
+    if (!pilihan) {
+        alert("Silakan pilih metode pembayaran (Transfer Bank atau QRIS).");
+        return;
+    }
 
-    alert(
-        "Pesanan berhasil dibuat! 🌱\n\n" +
-        "Nomor pesanan: #" + pesanan.id + "\n" +
-        "Total pembayaran: " + formatRupiah(total) + "\n\n" +
-        "Terima kasih telah memesan."
-    );
->>>>>>> 5eb1798 (update prjek penambahan fitur pembayaran)
+    const total = keranjang.reduce(function (sum, item) {
+        return sum + item.harga * item.jumlah;
+    }, 0);
 
-    const pesanan = buatPesanan(keranjang, total);
-
-    // Desain pesanan: daftar menu yang dipesan
-    const daftarItem = keranjang.map(function (item) {
-        return `
-            <div class="ringkasan-item">
-                <span>${esc(item.nama)} <small>x${item.jumlah}</small></span>
-                <strong>${formatRupiah(item.harga * item.jumlah)}</strong>
-            </div>`;
-    }).join("");
-
-    document.getElementById("info-detail-pesanan").innerHTML = `
-        <div class="ringkasan-pesanan">
-            <div class="ringkasan-nomor">Pesanan #${esc(String(pesanan.id))}</div>
-
-            <div class="ringkasan-data">
-                <p><b>Nama</b> ${esc(nama)}</p>
-                <p><b>Telepon</b> ${esc(telp)}</p>
-                <p><b>Alamat</b> ${esc(alamat)}</p>
-            </div>
-
-            <div class="ringkasan-daftar">${daftarItem}</div>
-
-            <div class="ringkasan-total">
-                <span>Total</span>
-                <strong>${formatRupiah(total)}</strong>
-            </div>
-        </div>`;
-
-    bukaOrderDiterima();
+    const pesanan = buatPesanan(keranjang, total, { nama: nama, telp: telp, alamat: alamat }, pilihan.value);
+    setPesananAktif(pesanan.id);
 
     // Reset keranjang & form
     keranjang = [];
@@ -259,21 +263,166 @@ btnCheckout.addEventListener("click", function () {
     document.getElementById("input-nama").value = "";
     document.getElementById("input-telp").value = "";
     document.getElementById("input-alamat").value = "";
+    pilihan.checked = false;
 
     tampilkanKeranjang();
     tutupKeranjang();
+    bukaOrderDiterima();
 });
 
-<<<<<<< HEAD
-// ===== POP UP ORDER DITERIMA =====
+// ===== PESANAN AKTIF & STATUS PEMBAYARAN =====
 const orderDiterimaEl = document.getElementById("order-diterima");
+const detailPesananEl = document.getElementById("info-detail-pesanan");
+const navStatusEl = document.getElementById("nav-status-pesanan");
+const linkStatusEl = document.getElementById("btn-status-pesanan");
+const teksStatusEl = document.getElementById("teks-status-pesanan");
 
+const LANGKAH_BAYAR = ["Pembayaran", "Verifikasi Admin", "Lunas"];
+
+function setPesananAktif(id) {
+    pesananAktifId = id;
+    if (id === null) {
+        sessionStorage.removeItem(KEY_AKTIF);
+    } else {
+        sessionStorage.setItem(KEY_AKTIF, String(id));
+    }
+}
+
+function ambilPesananAktif() {
+    return pesananAktifId === null ? null : cariPesanan(pesananAktifId);
+}
+
+function langkahAktif(status) {
+    if (status === STATUS_BAYAR.LUNAS) return 2;
+    if (status === STATUS_BAYAR.MENUNGGU) return 1;
+    return 0;
+}
+
+function htmlLangkah(status) {
+    const aktif = langkahAktif(status);
+    const lunas = status === STATUS_BAYAR.LUNAS;
+
+    return `<ol class="langkah-bayar">${LANGKAH_BAYAR.map(function (nama, i) {
+        const kelas = i < aktif || (lunas && i === aktif) ? "selesai" : i === aktif ? "aktif" : "";
+        return `<li class="${kelas}"><span>${i + 1}</span>${nama}</li>`;
+    }).join("")}</ol>`;
+}
+
+function htmlInstruksiBayar(pesanan) {
+    const total = formatRupiah(pesanan.total);
+
+    if (pesanan.metode === "QRIS") {
+        return `
+            <div class="kotak-bayar">
+                <p class="bayar-judul">Scan QRIS untuk membayar</p>
+                <img src="${esc(INFO_PEMBAYARAN.QRIS.gambar)}" class="gambar-qris" alt="QRIS">
+                <p class="bayar-total">Total: <strong>${total}</strong></p>
+            </div>`;
+    }
+
+    const rek = INFO_PEMBAYARAN.Transfer;
+    return `
+        <div class="kotak-bayar">
+            <p class="bayar-judul">Transfer ke rekening berikut</p>
+            <p class="bayar-bank">${esc(rek.bank)}</p>
+            <p class="bayar-rek">${esc(rek.rekening)}</p>
+            <p class="bayar-an">a.n. ${esc(rek.atasNama)}</p>
+            <p class="bayar-total">Total: <strong>${total}</strong></p>
+        </div>`;
+}
+
+function htmlBagianBayar(pesanan) {
+    if (pesanan.statusBayar === STATUS_BAYAR.LUNAS) {
+        return `<p class="info-bayar sukses">Pembayaran Anda sudah dikonfirmasi. Pesanan sedang diproses. 🌱</p>`;
+    }
+
+    if (pesanan.statusBayar === STATUS_BAYAR.MENUNGGU) {
+        return `<p class="info-bayar">Pembayaran sedang diverifikasi admin. Status akan berubah otomatis di halaman ini.</p>`;
+    }
+
+    return `
+        ${htmlInstruksiBayar(pesanan)}
+        <button type="button" class="btn-checkout" id="btn-sudah-bayar">Saya Sudah Bayar</button>`;
+}
+
+function htmlRingkasan(pesanan) {
+    const daftarItem = pesanan.items.map(function (item) {
+        return `
+            <div class="ringkasan-item">
+                <span>${esc(item.nama)} <small>x${item.jumlah}</small></span>
+                <strong>${formatRupiah(item.harga * item.jumlah)}</strong>
+            </div>`;
+    }).join("");
+
+    return `
+        <div class="ringkasan-pesanan">
+            <div class="ringkasan-nomor">Pesanan #${esc(String(pesanan.id))}</div>
+
+            <div class="ringkasan-data">
+                <p><b>Nama</b> ${esc(pesanan.pembeli.nama)}</p>
+                <p><b>Telepon</b> ${esc(pesanan.pembeli.telp)}</p>
+                <p><b>Alamat</b> ${esc(pesanan.pembeli.alamat)}</p>
+                <p><b>Metode</b> ${esc(pesanan.metode)}</p>
+            </div>
+
+            <div class="ringkasan-daftar">${daftarItem}</div>
+
+            <div class="ringkasan-total">
+                <span>Total</span>
+                <strong>${formatRupiah(pesanan.total)}</strong>
+            </div>
+        </div>`;
+}
+
+function tampilkanPesanan(pesanan) {
+    const lunas = pesanan.statusBayar === STATUS_BAYAR.LUNAS;
+
+    document.getElementById("order-ikon").textContent = lunas ? "✅" : "🌱";
+    document.getElementById("order-judul").textContent = lunas ? "Pembayaran Lunas!" : "Order Diterima!";
+    document.getElementById("order-sub").textContent = lunas
+        ? "Terima kasih, pembayaran Anda telah kami terima."
+        : "Selesaikan pembayaran agar pesanan dapat diproses.";
+
+    detailPesananEl.innerHTML = htmlLangkah(pesanan.statusBayar) + htmlRingkasan(pesanan) + htmlBagianBayar(pesanan);
+}
+
+// Sinkronkan indikator navbar dan popup dengan data terbaru di localStorage
+function segarkanStatusPesanan() {
+    const pesanan = ambilPesananAktif();
+
+    if (!pesanan) {
+        setPesananAktif(null);
+        navStatusEl.hidden = true;
+        orderDiterimaEl.classList.remove("aktif");
+        return;
+    }
+
+    navStatusEl.hidden = false;
+    teksStatusEl.textContent = "#" + pesanan.id + " · " + labelBayarSingkat(pesanan.statusBayar);
+    linkStatusEl.title = "Pesanan #" + pesanan.id + " - " + pesanan.statusBayar;
+    linkStatusEl.className = "status-pesanan " + kelasBayar(pesanan.statusBayar);
+
+    if (orderDiterimaEl.classList.contains("aktif")) tampilkanPesanan(pesanan);
+}
+
+// ===== POP UP ORDER DITERIMA =====
 function bukaOrderDiterima() {
+    const pesanan = ambilPesananAktif();
+    if (!pesanan) return;
+
+    tampilkanPesanan(pesanan);
     orderDiterimaEl.classList.add("aktif");
+    segarkanStatusPesanan();
 }
 
 function tutupOrderDiterima() {
+    if (!orderDiterimaEl.classList.contains("aktif")) return;
     orderDiterimaEl.classList.remove("aktif");
+
+    // Pesanan lunas yang sudah dilihat customer tidak perlu dipantau lagi
+    const pesanan = ambilPesananAktif();
+    if (pesanan && pesanan.statusBayar === STATUS_BAYAR.LUNAS) setPesananAktif(null);
+    segarkanStatusPesanan();
 }
 
 document.getElementById("tutup-order-diterima").addEventListener("click", tutupOrderDiterima);
@@ -289,9 +438,31 @@ document.addEventListener("keydown", function (event) {
     if (event.key === "Escape") tutupOrderDiterima();
 });
 
+// Tombol "Saya Sudah Bayar" (dibuat dinamis, jadi memakai event delegation)
+detailPesananEl.addEventListener("click", function (event) {
+    if (!event.target.closest("#btn-sudah-bayar") || pesananAktifId === null) return;
+
+    ubahStatusBayar(pesananAktifId, STATUS_BAYAR.MENUNGGU);
+    segarkanStatusPesanan();
+});
+
+// Klik indikator di navbar untuk membuka kembali popup
+linkStatusEl.addEventListener("click", function (event) {
+    event.preventDefault();
+    bukaOrderDiterima();
+});
+
+// Admin mengubah status di tab lain, tampilan customer ikut berubah
+pantauData(function () {
+    keranjang = muatKeranjang();
+    tampilkanKeranjang();
+    segarkanStatusPesanan();
+    renderKonten();
+    renderMenu();
+});
+
+// ===== INISIALISASI =====
 renderKonten();
 renderMenu();
-=======
-renderKonten();
-renderMenu();
->>>>>>> 5eb1798 (update prjek penambahan fitur pembayaran)
+tampilkanKeranjang();
+segarkanStatusPesanan();

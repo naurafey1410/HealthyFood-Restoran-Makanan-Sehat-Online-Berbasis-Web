@@ -797,3 +797,219 @@ body {
     font-size: 13px;
     color: #0f5508;
 }
+/* ===== PEMBAYARAN ===== */
+
+/* Pilihan metode di form checkout */
+.form-group .pilihan-bayar {
+    display: flex;
+    gap: 8px;
+}
+
+.form-group .opsi-bayar {
+    flex: 1;
+    margin: 0;
+    cursor: pointer;
+}
+
+.form-group .opsi-bayar input {
+    position: absolute;
+    width: auto;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.opsi-bayar span {
+    display: block;
+    padding: 10px 6px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #fafafa;
+    color: #555;
+    font-size: 12px;
+    font-weight: normal;
+    text-align: center;
+    transition: 0.2s;
+}
+
+.opsi-bayar input:checked + span {
+    border-color: #0f5508;
+    background: #eef6dc;
+    color: #0f5508;
+    font-weight: bold;
+}
+
+.opsi-bayar input:focus-visible + span {
+    box-shadow: 0 0 0 2px rgba(15, 85, 8, 0.25);
+}
+
+/* Indikator status pesanan di navbar */
+.nav-links .status-pesanan {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.nav-links .status-pesanan.bayar-belum {
+    background: #fde8e8;
+    color: #b03a2e;
+}
+
+.nav-links .status-pesanan.bayar-menunggu {
+    background: #fff3cd;
+    color: #8a6d00;
+}
+
+.nav-links .status-pesanan.bayar-lunas {
+    background: #d8ef9a;
+    color: #1B4D20;
+}
+
+/* Langkah pembayaran di popup */
+.langkah-bayar {
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    margin: 0 0 16px;
+    padding: 0;
+}
+
+.langkah-bayar li {
+    flex: 1;
+    position: relative;
+    font-size: 11px;
+    color: #999;
+}
+
+.langkah-bayar li::before {
+    content: "";
+    position: absolute;
+    top: 11px;
+    right: 50%;
+    width: 100%;
+    height: 2px;
+    background: #e3e3e3;
+}
+
+.langkah-bayar li:first-child::before {
+    display: none;
+}
+
+.langkah-bayar span {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    margin: 0 auto 4px;
+    border-radius: 50%;
+    background: #e3e3e3;
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.langkah-bayar li.aktif,
+.langkah-bayar li.selesai {
+    color: #1B4D20;
+    font-weight: bold;
+}
+
+.langkah-bayar li.aktif span {
+    background: #e0a800;
+}
+
+.langkah-bayar li.selesai span {
+    background: #0f5508;
+}
+
+.langkah-bayar li.selesai::before,
+.langkah-bayar li.aktif::before {
+    background: #0f5508;
+}
+
+/* Instruksi pembayaran */
+.kotak-bayar {
+    margin-bottom: 14px;
+    padding: 14px;
+    border: 1px solid #d8ef9a;
+    border-radius: 14px;
+    background: #fbfdf5;
+    text-align: center;
+}
+
+.kotak-bayar p {
+    margin: 0 0 4px;
+    font-size: 13px;
+    color: #444;
+}
+
+.kotak-bayar .bayar-judul {
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #1B4D20;
+}
+
+.kotak-bayar .bayar-bank {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.kotak-bayar .bayar-rek {
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: #0f5508;
+}
+
+.kotak-bayar .bayar-total {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #c9d9a3;
+}
+
+.kotak-bayar .bayar-total strong {
+    color: #0f5508;
+    font-size: 16px;
+}
+
+.gambar-qris {
+    display: block;
+    width: 200px;
+    max-width: 100%;
+    margin: 0 auto 6px;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.info-bayar {
+    margin: 0 0 14px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #fff3cd;
+    color: #8a6d00;
+    font-size: 13px;
+}
+
+.info-bayar.sukses {
+    background: #d8ef9a;
+    color: #1B4D20;
+}
+
+#btn-sudah-bayar {
+    margin-bottom: 10px;
+}
+
+#btn-tutup-ok {
+    background: #e8efdc;
+    color: #1B4D20;
+}
+
+#btn-tutup-ok:hover {
+    background: #d8ef9a;
+}

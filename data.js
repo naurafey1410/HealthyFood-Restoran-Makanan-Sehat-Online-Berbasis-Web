@@ -38,7 +38,7 @@ const PRODUK_AWAL = [
     { id: 8, nama: "Fruit Salad", kalori: "120 - 180 kkal", harga: 23000, gambar: "gambar/salad_buah.jpg", grup: "", best: false },
     { id: 9, nama: "Grilled Salmon", kalori: "400 - 500 kkal", harga: 43000, gambar: "gambar/salmon_panggang.jpg", grup: "", best: false },
     { id: 10, nama: "Chicken Caesar Wrap", kalori: "380 - 480 kkal", harga: 27000, gambar: "gambar/kebab_daging.webp", grup: "", best: false },
-    { id: 11, nama: "Smoked Salmon & Cream Cheese Bagel", kalori: "350 - 450 kkal", harga: 40000, gambar: "gambar/roti_salmon.jpg", grup: "", best: false },
+    { id: 11, nama: "Salmon & Cream Cheese Bagel", kalori: "350 - 450 kkal", harga: 40000, gambar: "gambar/roti_salmon.jpg", grup: "", best: false },
     { id: 12, nama: "Grilled Chicken Pesto Pasta", kalori: "480 - 580 kkal", harga: 30000, gambar: "gambar/pasta_ayam.jpg", grup: "", best: false },
     { id: 13, nama: "Avocado Toast", kalori: "220 - 300 kkal", harga: 22000, gambar: "gambar/sarapan_sehat.jpg", grup: "sarapan", best: false },
     { id: 14, nama: "Oatmeal Fruit Bowl", kalori: "280 - 350 kkal", harga: 26000, gambar: "gambar/sarapan_sehat.jpg", grup: "sarapan", best: false },

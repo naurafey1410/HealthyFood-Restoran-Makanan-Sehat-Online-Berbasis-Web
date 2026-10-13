@@ -172,6 +172,7 @@ btnKatering.addEventListener("click", function (event) {
     alert(teks + "Silakan hubungi restoran untuk informasi lebih lanjut.");
 });
 
+<<<<<<< HEAD
 // ===== CHECKOUT (hanya satu listener) =====
 btnCheckout.addEventListener("click", function () {
     if (keranjang.length === 0) {
@@ -195,6 +196,11 @@ btnCheckout.addEventListener("click", function () {
 
     if (nama === "" || telp === "" || alamat === "") {
         alert("Mohon lengkapi Nama, Nomor Telepon, dan Alamat pengiriman terlebih dahulu! 🌱");
+=======
+btnCheckout.addEventListener("click", function () {
+    if (keranjang.length === 0) {
+        alert("Keranjang masih kosong. Silakan pilih makanan terlebih dahulu.");
+>>>>>>> 5eb1798 (update prjek penambahan fitur pembayaran)
         return;
     }
 
@@ -202,6 +208,18 @@ btnCheckout.addEventListener("click", function () {
     keranjang.forEach(function (item) {
         total += item.harga * item.jumlah;
     });
+<<<<<<< HEAD
+=======
+
+    const pesanan = buatPesanan(keranjang, total);
+
+    alert(
+        "Pesanan berhasil dibuat! 🌱\n\n" +
+        "Nomor pesanan: #" + pesanan.id + "\n" +
+        "Total pembayaran: " + formatRupiah(total) + "\n\n" +
+        "Terima kasih telah memesan."
+    );
+>>>>>>> 5eb1798 (update prjek penambahan fitur pembayaran)
 
     const pesanan = buatPesanan(keranjang, total);
 
@@ -246,6 +264,7 @@ btnCheckout.addEventListener("click", function () {
     tutupKeranjang();
 });
 
+<<<<<<< HEAD
 // ===== POP UP ORDER DITERIMA =====
 const orderDiterimaEl = document.getElementById("order-diterima");
 
@@ -272,3 +291,7 @@ document.addEventListener("keydown", function (event) {
 
 renderKonten();
 renderMenu();
+=======
+renderKonten();
+renderMenu();
+>>>>>>> 5eb1798 (update prjek penambahan fitur pembayaran)

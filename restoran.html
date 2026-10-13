@@ -167,7 +167,27 @@
         <a href="admin/login.html" class="link-admin">Admin</a>
     </footer>
 
-    <!-- POP UP ORDER & PEMBAYARAN (harus di atas script) -->
+    <!-- POP UP DETAIL MENU -->
+    <div id="detail-menu-overlay" class="detail-menu-overlay" aria-hidden="true">
+        <section class="detail-menu-card" role="dialog" aria-modal="true" aria-labelledby="detail-menu-nama">
+            <button type="button" id="tutup-detail-menu" class="detail-menu-close" aria-label="Tutup detail menu">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <img id="detail-menu-gambar" class="detail-menu-gambar" src="" alt="">
+            <div class="detail-menu-info">
+                <span class="detail-menu-label"><i class="fa-solid fa-leaf"></i> Informasi Menu</span>
+                <h2 id="detail-menu-nama"></h2>
+                <p id="detail-menu-deskripsi"></p>
+                <div class="detail-menu-harga" id="detail-menu-harga"></div>
+                <h3>Informasi Gizi (perkiraan per porsi)</h3>
+                <div id="detail-menu-gizi" class="detail-menu-gizi"></div>
+                <p class="detail-menu-catatan">Informasi gizi merupakan perkiraan dan dapat berbeda sesuai bahan serta cara pengolahan.</p>
+                <button type="button" id="detail-menu-pesan" class="btn-pesan-detail">Pesan Menu Ini</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- POP UP ORDER & PEMBAYARAN  -->
     <div id="order-diterima" class="order-overlay">
         <div class="order-card">
             <button id="tutup-order-diterima" class="btn-tutup-order" aria-label="Tutup">

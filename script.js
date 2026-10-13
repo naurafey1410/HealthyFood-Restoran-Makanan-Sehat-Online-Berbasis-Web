@@ -50,6 +50,96 @@ const jumlahKeranjang = document.getElementById("jumlah-keranjang");
 const totalHarga = document.getElementById("total-harga");
 const btnCheckout = document.getElementById("btn-checkout");
 
+// ===== DETAIL MENU: deskripsi dan perkiraan informasi gizi =====
+const detailMenuOverlay = document.getElementById("detail-menu-overlay");
+const detailMenuGambar = document.getElementById("detail-menu-gambar");
+const detailMenuNama = document.getElementById("detail-menu-nama");
+const detailMenuDeskripsi = document.getElementById("detail-menu-deskripsi");
+const detailMenuHarga = document.getElementById("detail-menu-harga");
+const detailMenuGizi = document.getElementById("detail-menu-gizi");
+const btnTutupDetailMenu = document.getElementById("tutup-detail-menu");
+const btnPesanDetail = document.getElementById("detail-menu-pesan");
+let detailProdukAktifId = null;
+
+// Nilai gizi adalah perkiraan per porsi, bukan hasil uji laboratorium
+const DETAIL_MENU = {
+    1: { deskripsi: "Salad sayuran segar yang cocok sebagai pilihan menu ringan dan kaya serat.", protein: "5–8 g", karbo: "15–25 g", lemak: "8–15 g", serat: "4–7 g" },
+    2: { deskripsi: "Steak berbahan dasar tempe yang menawarkan protein nabati dengan cita rasa gurih.", protein: "15–22 g", karbo: "20–35 g", lemak: "10–18 g", serat: "5–8 g" },
+    3: { deskripsi: "Olahan jamur dengan tekstur lembut dan rasa gurih sebagai alternatif menu steak.", protein: "8–14 g", karbo: "25–40 g", lemak: "12–20 g", serat: "4–7 g" },
+    4: { deskripsi: "Mie dengan bayam sebagai variasi menu yang memadukan karbohidrat dan sayuran.", protein: "8–14 g", karbo: "50–70 g", lemak: "6–14 g", serat: "4–8 g" },
+    5: { deskripsi: "Kebab sayuran yang praktis dengan kombinasi sayuran dan kulit kebab.", protein: "7–12 g", karbo: "35–50 g", lemak: "8–15 g", serat: "5–8 g" },
+    6: { deskripsi: "Sup ayam hangat dengan kuah dan bahan pelengkap yang cocok untuk hidangan ringan.", protein: "15–25 g", karbo: "10–25 g", lemak: "5–12 g", serat: "2–5 g" },
+    7: { deskripsi: "Grain bowl berisi sumber karbohidrat dan pelengkap yang dapat memberi energi untuk aktivitas.", protein: "10–18 g", karbo: "55–75 g", lemak: "10–18 g", serat: "6–10 g" },
+    8: { deskripsi: "Salad buah dengan aneka potongan buah sebagai pilihan segar dengan rasa manis alami.", protein: "2–5 g", karbo: "25–40 g", lemak: "1–8 g", serat: "3–6 g" },
+    9: { deskripsi: "Salmon panggang sebagai sumber protein dan lemak omega-3, disajikan sebagai menu utama.", protein: "25–35 g", karbo: "5–20 g", lemak: "15–25 g", serat: "1–4 g" },
+    10: { deskripsi: "Wrap berisi ayam dan sayuran yang praktis untuk dinikmati sebagai menu makan.", protein: "20–30 g", karbo: "35–50 g", lemak: "10–18 g", serat: "4–7 g" },
+    11: { deskripsi: "Bagel dengan salmon dan cream cheese yang memadukan protein, karbohidrat, dan tekstur lembut.", protein: "18–28 g", karbo: "35–50 g", lemak: "12–22 g", serat: "2–5 g" },
+    12: { deskripsi: "Pasta dengan ayam dan pesto untuk pilihan hidangan mengenyangkan dengan rasa herba.", protein: "20–30 g", karbo: "55–75 g", lemak: "12–22 g", serat: "3–7 g" },
+    13: { deskripsi: "Roti panggang dengan alpukat, cocok sebagai pilihan sarapan dengan lemak tak jenuh.", protein: "5–9 g", karbo: "25–40 g", lemak: "10–18 g", serat: "6–10 g" },
+    14: { deskripsi: "Oatmeal dengan buah sebagai menu sarapan yang mengandung karbohidrat dan serat.", protein: "7–12 g", karbo: "40–55 g", lemak: "5–12 g", serat: "6–10 g" },
+    15: { deskripsi: "Kombinasi telur dan roti panggang untuk sarapan praktis dengan sumber protein.", protein: "12–20 g", karbo: "30–45 g", lemak: "10–18 g", serat: "3–6 g" }
+};
+
+function bukaDetailMenu(id) {
+    const produk = Produk.semua().find(function (p) { return p.id === id; });
+    if (!produk) return;
+    const detail = DETAIL_MENU[id] || {
+        deskripsi: "Menu makanan dari Healthy Food. Hubungi pengelola untuk mengetahui bahan dan informasi gizi lebih lengkap.",
+        protein: "Bervariasi", karbo: "Bervariasi", lemak: "Bervariasi", serat: "Bervariasi"
+    };
+
+    detailProdukAktifId = produk.id;
+    detailMenuGambar.src = produk.gambar;
+    detailMenuGambar.alt = produk.nama;
+    detailMenuNama.textContent = produk.nama;
+    detailMenuDeskripsi.textContent = detail.deskripsi;
+    detailMenuHarga.textContent = formatRupiah(produk.harga);
+    detailMenuGizi.innerHTML = `
+        <div class="gizi-item"><span>Kalori</span><strong>${esc(produk.kalori || "Tidak tersedia")}</strong></div>
+        <div class="gizi-item"><span>Protein</span><strong>${esc(detail.protein)}</strong></div>
+        <div class="gizi-item"><span>Karbohidrat</span><strong>${esc(detail.karbo)}</strong></div>
+        <div class="gizi-item"><span>Lemak</span><strong>${esc(detail.lemak)}</strong></div>
+        <div class="gizi-item"><span>Serat</span><strong>${esc(detail.serat)}</strong></div>`;
+    detailMenuOverlay.classList.add("aktif");
+    detailMenuOverlay.setAttribute("aria-hidden", "false");
+}
+
+function tutupDetailMenu() {
+    detailMenuOverlay.classList.remove("aktif");
+    detailMenuOverlay.setAttribute("aria-hidden", "true");
+    detailProdukAktifId = null;
+}
+
+menuContainer.addEventListener("click", function (event) {
+    const gambar = event.target.closest(".gambar-detail-menu");
+    if (gambar) {
+        bukaDetailMenu(Number(gambar.getAttribute("data-product-id")));
+        return;
+    }
+});
+
+menuContainer.addEventListener("keydown", function (event) {
+    const gambar = event.target.closest(".gambar-detail-menu");
+    if (gambar && (event.key === "Enter" || event.key === " ")) {
+        event.preventDefault();
+        bukaDetailMenu(Number(gambar.getAttribute("data-product-id")));
+    }
+});
+
+btnTutupDetailMenu.addEventListener("click", tutupDetailMenu);
+detailMenuOverlay.addEventListener("click", function (event) {
+    if (event.target === detailMenuOverlay) tutupDetailMenu();
+});
+btnPesanDetail.addEventListener("click", function () {
+    if (detailProdukAktifId === null) return;
+    const tombolMenu = menuContainer.querySelector('.btn-pesan[data-id="' + detailProdukAktifId + '"]');
+    tutupDetailMenu();
+    if (tombolMenu) tombolMenu.click();
+});
+document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") tutupDetailMenu();
+});
+
 function renderKonten() {
     const konten = getKonten();
     document.getElementById("tulisan-pembuka").textContent = konten.tulisanPembuka;
@@ -59,7 +149,7 @@ function renderKonten() {
 function kartu(p) {
     return `
         <div class="card">
-            <img src="${esc(p.gambar)}" alt="${esc(p.nama)}">
+            <img src="${esc(p.gambar)}" alt="${esc(p.nama)}" class="gambar-detail-menu" data-product-id="${p.id}" role="button" tabindex="0" title="Klik untuk melihat detail menu">
             <div class="card-content">
                 <h3>${esc(p.nama)}</h3>
                 <span>${formatRupiah(p.harga)}</span>
@@ -73,7 +163,7 @@ function kartu(p) {
 function kartuGrup(items) {
     return `
         <div class="card card-featured-triple">
-            <img src="${esc(items[0].gambar)}" alt="${esc(items[0].grup)}">
+            <img src="${esc(items[0].gambar)}" alt="${esc(items[0].grup)}" class="gambar-detail-menu" data-product-id="${items[0].id}" role="button" tabindex="0" title="Klik untuk melihat detail menu">
             <div class="triple-content-wrapper">
                 ${items.map(function (p) {
                     return `

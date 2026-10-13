@@ -1006,3 +1006,140 @@ body {
 #btn-tutup-ok:hover {
     background: #d8ef9a;
 }
+
+
+/* ===== POP UP DETAIL MENU (tambahan) ===== */
+.gambar-detail-menu {
+    cursor: pointer;
+    transition: transform 0.25s ease, filter 0.25s ease;
+}
+.gambar-detail-menu:hover {
+    transform: scale(1.025);
+    filter: brightness(0.96);
+}
+.gambar-detail-menu:focus-visible {
+    outline: 3px solid #7DAA1E;
+    outline-offset: 3px;
+}
+.detail-menu-overlay {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(20, 35, 15, 0.62);
+    z-index: 3000;
+}
+.detail-menu-overlay.aktif { display: flex; }
+.detail-menu-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(180px, 0.9fr) minmax(240px, 1.1fr);
+    width: min(760px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 0 18px 60px rgba(0,0,0,.25);
+}
+.detail-menu-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 1;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,.95);
+    color: #24451d;
+    cursor: pointer;
+    font-size: 18px;
+}
+.detail-menu-gambar {
+    width: 100%;
+    height: 100%;
+    min-height: 330px;
+    object-fit: cover;
+    background: #f4f8eb;
+}
+.detail-menu-info { padding: 28px 25px; }
+.detail-menu-label {
+    display: inline-block;
+    margin-bottom: 8px;
+    color: #5f8618;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: .7px;
+}
+.detail-menu-info h2 {
+    margin: 0 35px 10px 0;
+    color: #21491b;
+    font-size: 25px;
+}
+.detail-menu-info p {
+    color: #5d6657;
+    font-size: 14px;
+    line-height: 1.6;
+}
+.detail-menu-harga {
+    margin: 16px 0 20px;
+    color: #39721f;
+    font-size: 20px;
+    font-weight: bold;
+}
+.detail-menu-info h3 {
+    margin: 0 0 12px;
+    color: #24451d;
+    font-size: 15px;
+}
+.detail-menu-gizi {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+}
+.gizi-item {
+    padding: 11px;
+    border-radius: 12px;
+    background: #f1f7e8;
+}
+.gizi-item span {
+    display: block;
+    margin-bottom: 4px;
+    color: #65735c;
+    font-size: 12px;
+}
+.gizi-item strong {
+    color: #25491d;
+    font-size: 15px;
+}
+.detail-menu-catatan {
+    font-size: 11px !important;
+}
+.btn-pesan-detail {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px 16px;
+    border: 0;
+    border-radius: 12px;
+    background: #39721f;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+}
+.btn-pesan-detail:hover { background: #285a17; }
+@media (max-width: 600px) {
+    .detail-menu-card {
+        grid-template-columns: 1fr;
+        max-width: 420px;
+    }
+    .detail-menu-gambar {
+        height: 190px;
+        min-height: 190px;
+        max-height: 190px;
+    }
+    .detail-menu-info { padding: 20px; }
+    .detail-menu-info h2 { font-size: 21px; }
+}

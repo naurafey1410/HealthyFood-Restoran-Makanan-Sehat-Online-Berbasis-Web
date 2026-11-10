@@ -88,13 +88,31 @@ public class LoginCustomerFrame extends JFrame {
                 JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) return;
 
         String u = user.getText().trim();
+        String noHP = telp.getText().trim();
         String pw = new String(pass.getPassword());
-        if (nama.getText().trim().isEmpty() || telp.getText().trim().isEmpty()
+
+        // Validasi kolom kosong
+        if (nama.getText().trim().isEmpty() || noHP.isEmpty()
                 || u.isEmpty() || pw.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Semua kolom wajib diisi.");
             return;
         }
-        if (!AkunStore.daftar(u, pw, nama.getText().trim(), telp.getText().trim())) {
+
+        // Validasi nomor HP
+        if (!noHP.matches("[0-9]{10,13}")) {
+            JOptionPane.showMessageDialog(this,
+                    "Nomor HP harus berupa angka dan terdiri dari 10-13 digit!");
+            return;
+        }
+
+        // Validasi password minimal 8 karakter
+        if (pw.length() < 8) {
+            JOptionPane.showMessageDialog(this,
+                    "Password minimal harus 8 karakter!");
+            return;
+        }
+
+        if (!AkunStore.daftar(u, pw, nama.getText().trim(), noHP)) {
             JOptionPane.showMessageDialog(this, "Username sudah dipakai.");
             return;
         }

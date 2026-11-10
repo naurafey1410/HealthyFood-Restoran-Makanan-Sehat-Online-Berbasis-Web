@@ -10,7 +10,7 @@ import java.text.*;
 import java.util.*;
 
 /** GUI Healthy Restaurant - Menu, Keranjang, dan Form Pesanan */
-public class Tugasgui extends JFrame {
+public class Tugasgui extends JPanel {
 
     private static final Color HIJAU_TUA = new Color(0x265F24), HIJAU_BTN = new Color(0x2E6E2C),
             HIJAU_MUDA = new Color(0xD4EC9A), HIJAU_BG = new Color(0xE4EFD0),
@@ -40,10 +40,7 @@ public class Tugasgui extends JFrame {
         sym.setGroupingSeparator('.');
         fmt = new DecimalFormat("#,###", sym);
 
-        setTitle("Healthy Restaurant");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1200, 720);
-        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
         add(buatPanelMenu(), BorderLayout.CENTER);
         add(buatPanelPesanan(), BorderLayout.EAST);
         if (namaCustomer != null) {
@@ -70,7 +67,7 @@ public class Tugasgui extends JFrame {
         JButton adminLogin = tombolHijau("Login Admin");
         adminLogin.setFont(new Font("Segoe UI", Font.BOLD, 12));
         adminLogin.setBorder(new EmptyBorder(6, 14, 6, 14));
-        adminLogin.addActionListener(e -> new LoginFrame());
+        adminLogin.addActionListener(e -> Navigasi.buka("login-admin", new LoginFrame()));
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         footer.setOpaque(false);
         footer.setBorder(new EmptyBorder(16, 0, 0, 0));
@@ -88,10 +85,6 @@ public class Tugasgui extends JFrame {
         scrollMenu.getVerticalScrollBar().setUnitIncrement(16);
         root.add(scrollMenu, BorderLayout.CENTER);
 
-        // Muat ulang menu tiap jendela customer aktif, jadi perubahan admin langsung terlihat
-        addWindowFocusListener(new WindowAdapter() {
-            public void windowGainedFocus(WindowEvent e) { muatMenu(); }
-        });
         return root;
     }
 
@@ -110,7 +103,15 @@ public class Tugasgui extends JFrame {
         kartu.setBackground(Color.WHITE);
         kartu.setBorder(new EmptyBorder(20, 18, 18, 18));
 
-        JLabel gambar = kiri(new JLabel(p.foto, SwingConstants.CENTER));
+        JLabel gambar;
+        if (p.foto instanceof ImageIcon) {
+            Image img = ((ImageIcon) p.foto).getImage()
+                    .getScaledInstance(130, 130, Image.SCALE_SMOOTH);
+            gambar = kiri(new JLabel(new ImageIcon(img), SwingConstants.CENTER));
+        } else {
+            gambar = kiri(new JLabel(String.valueOf(p.foto), SwingConstants.CENTER));
+        }
+        
         gambar.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 72));
         gambar.setOpaque(true);
         gambar.setBackground(new Color(0xF1F5E8));
@@ -141,7 +142,7 @@ public class Tugasgui extends JFrame {
         judul.setFont(new Font("Segoe UI Emoji", Font.BOLD, 22));
         judul.setForeground(HIJAU_TUA);
         JButton btnTutup = tombolIkon("X", HIJAU_TUA, 18);
-        btnTutup.addActionListener(e -> dispose());
+        btnTutup.addActionListener(e -> Navigasi.buka("login-customer", new LoginCustomerFrame()));
         header.add(judul, BorderLayout.WEST);
         header.add(btnTutup, BorderLayout.EAST);
         panel.add(header, BorderLayout.NORTH);
@@ -330,7 +331,7 @@ public class Tugasgui extends JFrame {
         JOptionPane.showMessageDialog(this, "Pesanan berhasil dibuat!\nNomor pesanan: #" + order.id +
                 "\nTotal: " + order.rupiah() + "\nAnda akan diarahkan ke halaman pembayaran.",
                 "Pesanan Berhasil", JOptionPane.INFORMATION_MESSAGE);
-        new PembayaranGUI(order).setVisible(true);
+        Navigasi.buka("pembayaran", new PembayaranGUI(order));
 
         // Reset
         keranjang.clear();
@@ -429,10 +430,5 @@ public class Tugasgui extends JFrame {
         b.setBorder(new LineBorder(HIJAU_MUDA, 1, true));
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         return b;
-    }
-
-    public static void main(String[] args) {
-        try { UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName()); } catch (Exception ignored) { }
-        SwingUtilities.invokeLater(() -> new LoginCustomerFrame());
     }
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** Penyimpanan data bersama selama aplikasi HealthyFood berjalan. */
+// Penyimpanan data bersama selama aplikasi HealthyFood berjalan
 public final class OrderStore {
     private static final List<Order> ORDERS = new ArrayList<>();
     private static int nextId = 1;
@@ -20,14 +20,12 @@ public final class OrderStore {
         return Collections.unmodifiableList(new ArrayList<>(ORDERS));
     }
     // === STATUS PESANAN ===
-    // Alur: Menunggu Pembayaran -> Menunggu Verifikasi -> Lunas -> Diproses -> Selesai
     public static final String MENUNGGU_BAYAR = "Menunggu Pembayaran";
     public static final String MENUNGGU_VERIF = "Menunggu Verifikasi";
     public static final String LUNAS = "Lunas";
     public static final String DIPROSES = "Diproses";
     public static final String SELESAI = "Selesai";
 
-    /** Status berikutnya. Menunggu Verifikasi -> Lunas (oleh admin), lalu Diproses, Selesai. */
     public static String langkahBerikut(String status) {
         switch (status) {
             case MENUNGGU_VERIF: return LUNAS;

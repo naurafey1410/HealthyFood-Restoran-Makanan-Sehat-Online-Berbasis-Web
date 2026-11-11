@@ -1,5 +1,6 @@
 package healthyfood.view;
 
+import healthyfood.model.Gambar;
 import healthyfood.model.OrderStore;
 import healthyfood.model.ProdukStore;
 import javax.swing.*;
@@ -75,11 +76,12 @@ public class Tugasgui extends JPanel {
         root.add(footer, BorderLayout.SOUTH);
         
         // === DAFTAR MENU (dari ProdukStore, sama dengan halaman admin) ===
-        gridMenu = new JPanel(new GridLayout(0, 3, 20, 20));
+        gridMenu = new PanelMenu();
         gridMenu.setOpaque(false);
         muatMenu();
         JScrollPane scrollMenu = new JScrollPane(gridMenu);
         scrollMenu.setBorder(null);
+        scrollMenu.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollMenu.setOpaque(false);
         scrollMenu.getViewport().setOpaque(false);
         scrollMenu.getVerticalScrollBar().setUnitIncrement(16);
@@ -95,36 +97,69 @@ public class Tugasgui extends JPanel {
         gridMenu.repaint();
     }
 
+    // Panel menu yang mengikuti lebar jendela; kartu tersusun berderet dan turun ke bawah
+    private static final class PanelMenu extends JPanel implements Scrollable {
+        private static final int JARAK = 16;
+        PanelMenu() { super(new FlowLayout(FlowLayout.LEFT, JARAK, JARAK)); setOpaque(false); }
+
+        // Tinggi dihitung dari lebar jendela, supaya semua baris kartu ikut terlihat
+        @Override public Dimension getPreferredSize() {
+            int lebar = getWidth();
+            if (lebar == 0 && getParent() != null) lebar = getParent().getWidth();
+            if (lebar == 0) lebar = 600;
+            int x = JARAK, y = JARAK, tinggiBaris = 0;
+            for (Component c : getComponents()) {
+                Dimension d = c.getPreferredSize();
+                if (x + d.width > lebar - JARAK && x > JARAK) {
+                    x = JARAK;
+                    y += tinggiBaris + JARAK;
+                    tinggiBaris = 0;
+                }
+                x += d.width + JARAK;
+                tinggiBaris = Math.max(tinggiBaris, d.height);
+            }
+            return new Dimension(lebar, y + tinggiBaris + JARAK);
+        }
+        public Dimension getPreferredScrollableViewportSize() { return getPreferredSize(); }
+        public int getScrollableUnitIncrement(Rectangle r, int orientasi, int arah) { return 16; }
+        public int getScrollableBlockIncrement(Rectangle r, int orientasi, int arah) { return 120; }
+        public boolean getScrollableTracksViewportWidth() { return true; }
+        public boolean getScrollableTracksViewportHeight() { return false; }
+    }
+
+    private static final int LEBAR_KARTU_MENU = 180, TINGGI_FOTO_MENU = 130;
+
     private JPanel buatKartuMenu(ProdukStore.Produk p) {
         String nama = p.nama, kalori = p.kalori;
         int harga = p.harga;
-        JPanel kartu = new JPanel();
-        kartu.setLayout(new BoxLayout(kartu, BoxLayout.Y_AXIS));
+        JPanel kartu = new JPanel(new BorderLayout());
         kartu.setBackground(Color.WHITE);
-        kartu.setBorder(new EmptyBorder(20, 18, 18, 18));
-
-        JLabel gambar;
+        kartu.setBorder(BorderFactory.createLineBorder(new Color(0xE3E8DA)));
+        // === FOTO: penuh sampai tepi kartu ===
+        JLabel foto;
         if (p.foto instanceof ImageIcon) {
-            Image img = ((ImageIcon) p.foto).getImage()
-                    .getScaledInstance(130, 130, Image.SCALE_SMOOTH);
-            gambar = kiri(new JLabel(new ImageIcon(img), SwingConstants.CENTER));
+            foto = new JLabel(Gambar.ikonIsi((ImageIcon) p.foto, LEBAR_KARTU_MENU, TINGGI_FOTO_MENU));
         } else {
-            gambar = kiri(new JLabel(String.valueOf(p.foto), SwingConstants.CENTER));
+            foto = new JLabel(String.valueOf(p.foto), SwingConstants.CENTER);
+            foto.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 60));
         }
-        
-        gambar.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 72));
-        gambar.setOpaque(true);
-        gambar.setBackground(new Color(0xF1F5E8));
-        gambar.setPreferredSize(new Dimension(100, 150));
-        gambar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
+        foto.setOpaque(true);
+        foto.setBackground(new Color(0xF1F5E8));
+        foto.setPreferredSize(new Dimension(LEBAR_KARTU_MENU, TINGGI_FOTO_MENU));
+        kartu.add(foto, BorderLayout.NORTH);
 
-        JLabel lblKalori = teks(kalori, Font.PLAIN, 12, Color.DARK_GRAY);
+        // === ISI KARTU ===
+        JPanel isi = new JPanel();
+        isi.setOpaque(false);
+        isi.setLayout(new BoxLayout(isi, BoxLayout.Y_AXIS));
+        isi.setBorder(new EmptyBorder(10, 12, 12, 12));
         JButton btnOrder = tombolHijau("Order");
-        btnOrder.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        btnOrder.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
         btnOrder.addActionListener(e -> tambahKeKeranjang(nama, harga));
-
-        susun(kartu, gambar, 12, teks(nama, Font.BOLD, 18, HIJAU_TUA), 4,
-                teks(rp(harga), Font.BOLD, 18, HIJAU_TUA), 10, lblKalori, 14, btnOrder);
+        susun(isi, teks(nama, Font.BOLD, 15, HIJAU_TUA), 2, teks(rp(harga), Font.BOLD, 14, HIJAU_TUA), 2,
+                teks(kalori, Font.PLAIN, 11, Color.DARK_GRAY), 8, btnOrder);
+        kartu.add(isi, BorderLayout.CENTER);
+        kartu.setPreferredSize(new Dimension(LEBAR_KARTU_MENU, kartu.getPreferredSize().height));
         return kartu;
     }
 
@@ -141,10 +176,7 @@ public class Tugasgui extends JPanel {
         JLabel judul = new JLabel("🛒 Pesanan");
         judul.setFont(new Font("Segoe UI Emoji", Font.BOLD, 22));
         judul.setForeground(HIJAU_TUA);
-        JButton btnTutup = tombolIkon("X", HIJAU_TUA, 18);
-        btnTutup.addActionListener(e -> Navigasi.buka("login-customer", new LoginCustomerFrame()));
         header.add(judul, BorderLayout.WEST);
-        header.add(btnTutup, BorderLayout.EAST);
         panel.add(header, BorderLayout.NORTH);
 
         // Isi: daftar item + form (tersembunyi dulu)
@@ -328,10 +360,7 @@ public class Tugasgui extends JPanel {
             rincian.add(it.nama + " x" + it.qty + " = " + rp(sub));
         }
         OrderStore.Order order = OrderStore.add(nama, telp, alamat, metode, rincian, total);
-        JOptionPane.showMessageDialog(this, "Pesanan berhasil dibuat!\nNomor pesanan: #" + order.id +
-                "\nTotal: " + order.rupiah() + "\nAnda akan diarahkan ke halaman pembayaran.",
-                "Pesanan Berhasil", JOptionPane.INFORMATION_MESSAGE);
-        Navigasi.buka("pembayaran", new PembayaranGUI(order));
+        bukaJendelaPembayaran(order);
 
         // Reset
         keranjang.clear();
@@ -346,6 +375,21 @@ public class Tugasgui extends JPanel {
 
     // ================= HELPER =================
     private String rp(int angka) { return "Rp " + fmt.format(angka); }
+
+    // === JENDELA PEMBAYARAN: terpisah dari halaman customer, ukurannya seperti panel ===
+    private void bukaJendelaPembayaran(OrderStore.Order order) {
+        Window pemilik = SwingUtilities.getWindowAncestor(this);
+        JDialog dlg = new JDialog(pemilik, "Pembayaran - Pesanan #" + order.id, Dialog.ModalityType.APPLICATION_MODAL);
+        JScrollPane gulir = new JScrollPane(new PembayaranGUI(order));
+        gulir.setBorder(null);
+        gulir.getVerticalScrollBar().setUnitIncrement(16);
+        dlg.setContentPane(gulir);
+        int tinggi = Math.min(780, Toolkit.getDefaultToolkit().getScreenSize().height - 120);
+        dlg.setSize(740, tinggi);
+        dlg.setResizable(false);
+        dlg.setLocationRelativeTo(pemilik);
+        dlg.setVisible(true);   // tertutup saat tombol Tutup ditekan
+    }
 
     private void pesan(String teks) {
         JOptionPane.showMessageDialog(this, teks, "Informasi", JOptionPane.WARNING_MESSAGE);

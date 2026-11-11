@@ -3,13 +3,13 @@ package healthyfood.model;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** Akun login demo. Akun customer baru hanya tersimpan selama aplikasi berjalan. */
+// Akun login demo. Akun customer baru hanya tersimpan selama aplikasi berjalan
 public final class AkunStore {
-    // === AKUN ADMIN (hardcoded, demo) ===
+    // AKUN ADMIN
     private static final String ADMIN_USER = "dimas";
     private static final String ADMIN_PASS = "admin123";
 
-    // === AKUN CUSTOMER: username -> {password, nama, telepon} ===
+    // AKUN CUSTOMER
     private static final Map<String, String[]> CUSTOMER = new LinkedHashMap<>();
     static {
         CUSTOMER.put("customer", new String[]{"customer123", "Pelanggan Demo", "081234567890"});
@@ -21,7 +21,7 @@ public final class AkunStore {
         return ADMIN_USER.equals(user) && ADMIN_PASS.equals(pass);
     }
 
-    /** Mengembalikan {password, nama, telepon} jika cocok, null jika tidak. */
+    // Mengembalikan {password, nama, telepon} jika cocok, null jika tidak
     public static synchronized String[] cekCustomer(String user, String pass) {
         String[] akun = CUSTOMER.get(user);
         return (akun != null && akun[0].equals(pass)) ? akun : null;

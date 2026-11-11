@@ -1,5 +1,6 @@
 package healthyfood.view;
 
+import healthyfood.model.Gambar;
 import healthyfood.model.OrderStore;
 import healthyfood.model.ProdukStore;
 import javax.swing.*;
@@ -9,7 +10,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 
-public class DashboardProdukGUI extends JFrame {
+public class DashboardProdukGUI extends JPanel {
     private final Color GREEN = new Color(46, 110, 44);
     private final Color DARK_GREEN = new Color(38, 95, 36);
     private final Color PALE = new Color(244, 248, 232);
@@ -20,12 +21,7 @@ public class DashboardProdukGUI extends JFrame {
     private JTable productTable;
 
     public DashboardProdukGUI() {
-        setTitle("HealthyFood - Admin");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1250, 760);
-        setMinimumSize(new Dimension(1000, 650));
-        setLocationRelativeTo(null);
-        getContentPane().setBackground(PALE);
+        setBackground(PALE);
         setLayout(new BorderLayout());
 
         add(buildSidebar(), BorderLayout.WEST);
@@ -47,10 +43,20 @@ public class DashboardProdukGUI extends JFrame {
         side.setPreferredSize(new Dimension(225, 0));
         side.setBorder(new EmptyBorder(22, 16, 18, 16));
 
-        JLabel brand = new JLabel("🌿 HealthyFood");
-        brand.setForeground(Color.WHITE);
-        brand.setFont(new Font("SansSerif", Font.BOLD, 22));
-        brand.setBorder(new EmptyBorder(5, 0, 28, 0));
+        // === LOGO (gambar/logo.png) di atas kotak terang agar tulisan hijaunya terbaca ===
+        JPanel brand = new JPanel(new BorderLayout());
+        brand.setBackground(PALE);
+        brand.setBorder(new EmptyBorder(12, 12, 12, 12));
+        ImageIcon logo = Gambar.ikon("logo.png");
+        if (logo != null) {
+            Image kecil = logo.getImage().getScaledInstance(180, -1, Image.SCALE_SMOOTH);
+            brand.add(new JLabel(new ImageIcon(kecil)), BorderLayout.CENTER);
+        } else {
+            JLabel teks = new JLabel("🌿 HealthyFood");
+            teks.setForeground(GREEN);
+            teks.setFont(new Font("SansSerif", Font.BOLD, 20));
+            brand.add(teks, BorderLayout.CENTER);
+        }
         side.add(brand, BorderLayout.NORTH);
 
         JPanel nav = new JPanel();
@@ -71,17 +77,10 @@ public class DashboardProdukGUI extends JFrame {
         // === LIHAT HALAMAN CUSTOMER (tutup jendela ini tidak menutup admin) ===
         JButton lihatCustomer = new JButton("↗  Lihat Halaman Customer");
         styleSidebarLink(lihatCustomer);
-        lihatCustomer.addActionListener(e -> {
-            Tugasgui t = new Tugasgui();
-            t.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            t.setVisible(true);
-        });
+        lihatCustomer.addActionListener(e -> Navigasi.buka("customer", new Tugasgui()));
         JButton logout = new JButton("⇥  Logout");
         styleSidebarLink(logout);
-        logout.addActionListener(e -> {
-            dispose();
-            new LoginFrame();
-        });
+        logout.addActionListener(e -> Navigasi.buka("login-customer", new LoginCustomerFrame()));
         bottom.add(new JSeparator());
         bottom.add(Box.createVerticalStrut(12));
         bottom.add(lihatCustomer);
@@ -405,6 +404,39 @@ public class DashboardProdukGUI extends JFrame {
         JTextField price = new JTextField(editing ? String.valueOf(lama.harga) : "", 22);
         JComboBox<String> group = new JComboBox<>(new String[]{"-", "Makanan utama", "Snack", "Minuman"});
         if (editing) group.setSelectedItem(lama.grup);
+        // === FOTO PRODUK: dipilih dari komputer, disalin ke folder gambar saat disimpan ===
+        java.io.File[] fotoSumber = new java.io.File[1];
+        ImageIcon[] fotoTampil = new ImageIcon[1];
+        if (editing && lama.foto instanceof ImageIcon) fotoTampil[0] = Gambar.ikonIsi((ImageIcon) lama.foto, 160, 110);
+        JLabel pratinjau = new JLabel("Belum ada foto", SwingConstants.CENTER);
+        pratinjau.setPreferredSize(new Dimension(160, 110));
+        pratinjau.setOpaque(true);
+        pratinjau.setBackground(new Color(0xF1F5E8));
+        if (fotoTampil[0] != null) pratinjau.setIcon(fotoTampil[0]);
+        JButton pilihFoto = new JButton("Pilih Gambar...");
+        styleSecondary(pilihFoto);
+        pilihFoto.addActionListener(e -> {
+            JFileChooser fc = new JFileChooser();
+            fc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+                    "Gambar (JPG, PNG, GIF, BMP)", "jpg", "jpeg", "png", "gif", "bmp"));
+            if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                java.io.File pilih = fc.getSelectedFile();
+                ImageIcon ikon = Gambar.muatFile(pilih);
+                if (ikon == null) {
+                    JOptionPane.showMessageDialog(this, "File tidak bisa dibaca. Pilih file JPG atau PNG.");
+                    return;
+                }
+                fotoSumber[0] = pilih;
+                fotoTampil[0] = Gambar.ikonIsi(ikon, 160, 110);
+                pratinjau.setIcon(fotoTampil[0]);
+                pratinjau.setText("");
+            }
+        });
+        JPanel panelFoto = new JPanel(new BorderLayout(10, 0));
+        panelFoto.setOpaque(false);
+        panelFoto.add(pratinjau, BorderLayout.WEST);
+        panelFoto.add(pilihFoto, BorderLayout.CENTER);
+
         JCheckBox best = new JCheckBox("Tandai sebagai Best Seller", editing && lama.bestSeller);
         JPanel form = new JPanel(new GridBagLayout());
         form.setBackground(Color.WHITE);
@@ -420,6 +452,8 @@ public class DashboardProdukGUI extends JFrame {
         c.gridx = 1; form.add(price, c);
         c.gridx = 0; c.gridy++; form.add(new JLabel("Grup"), c);
         c.gridx = 1; form.add(group, c);
+        c.gridx = 0; c.gridy++; form.add(new JLabel("Foto"), c);
+        c.gridx = 1; form.add(panelFoto, c);
         c.gridx = 1; c.gridy++; form.add(best, c);
 
         int result = JOptionPane.showConfirmDialog(this, form,
@@ -437,7 +471,21 @@ public class DashboardProdukGUI extends JFrame {
                 JOptionPane.showMessageDialog(this, "Harga harus berupa angka, contoh: 28000.");
                 return;
             }
-            ProdukStore.Produk baru = new ProdukStore.Produk(editing ? lama.foto : " ",
+            // Foto wajib saat menambah produk baru
+            if (!editing && fotoSumber[0] == null) {
+                JOptionPane.showMessageDialog(this, "Pilih foto produk dulu.");
+                return;
+            }
+            Object foto = editing ? lama.foto : fotoTampil[0];
+            if (fotoSumber[0] != null) {
+                try {
+                    foto = Gambar.muatFile(Gambar.salin(fotoSumber[0]));
+                } catch (java.io.IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Gagal menyalin foto: " + ex.getMessage());
+                    return;
+                }
+            }
+            ProdukStore.Produk baru = new ProdukStore.Produk(foto,
                     name.getText().trim(), calories.getText().trim(), harga,
                     (String) group.getSelectedItem(), best.isSelected());
             if (editing) ProdukStore.ubah(row, baru);
@@ -451,17 +499,12 @@ public class DashboardProdukGUI extends JFrame {
         DefaultTableModel m = (DefaultTableModel) productTable.getModel();
         m.setRowCount(0);
         for (ProdukStore.Produk p : ProdukStore.getAll()) {
-            m.addRow(new Object[]{p.foto, p.nama, p.kalori, p.rupiah(), p.grup, p.bestSeller ? "Ya" : "Tidak"});
+            m.addRow(new Object[]{p.foto instanceof ImageIcon ? "Foto" : p.foto, p.nama, p.kalori, p.rupiah(), p.grup, p.bestSeller ? "Ya" : "Tidak"});
         }
     }
 
     private void showPage(String page) {
         if (page.equals("orders")) refreshOrders();
         contentLayout.show(content, page);
-    }
-
-    public static void main(String[] args) {
-        Tema.pakai();
-        SwingUtilities.invokeLater(() -> new DashboardProdukGUI().setVisible(true));
     }
 }

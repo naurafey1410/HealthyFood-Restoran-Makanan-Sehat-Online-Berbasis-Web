@@ -4,18 +4,14 @@ import healthyfood.model.AkunStore;
 import javax.swing.*;
 import java.awt.*;
 
-public class LoginFrame extends JFrame {
+public class LoginFrame extends JPanel {
 
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JLabel alertLabel;
 
     public LoginFrame() {
-        setTitle("HealthyFood - Login Admin");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(480, 540);
-        setLocationRelativeTo(null);
-        setResizable(true);
+        setLayout(new BorderLayout());
 
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(new Color(245, 248, 240));
@@ -67,8 +63,7 @@ public class LoginFrame extends JFrame {
         form.add(loginButton);
         form.add(kembaliButton);
         kembaliButton.addActionListener(e -> {
-            new LoginCustomerFrame();
-            dispose();
+            Navigasi.buka("login-customer", new LoginCustomerFrame());
         });
 
         panel.add(form);
@@ -81,8 +76,7 @@ public class LoginFrame extends JFrame {
 
             if (AkunStore.cekAdmin(username, password)) {
 
-                new DashboardProdukGUI().setVisible(true);
-                dispose();
+                Navigasi.buka("admin", new DashboardProdukGUI());
 
             } else {
                 alertLabel.setText("Username atau password salah!");
@@ -91,12 +85,6 @@ public class LoginFrame extends JFrame {
             }
         });
 
-        getRootPane().setDefaultButton(loginButton);
-        setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        Tema.pakai();
-        SwingUtilities.invokeLater(() -> new LoginFrame());
+        SwingUtilities.invokeLater(() -> getRootPane().setDefaultButton(loginButton));
     }
 }

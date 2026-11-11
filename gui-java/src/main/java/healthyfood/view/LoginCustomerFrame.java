@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /** Halaman login customer. Setelah berhasil, customer masuk ke halaman pemesanan. */
-public class LoginCustomerFrame extends JFrame {
+public class LoginCustomerFrame extends JPanel {
 
     private final JTextField txtUser = new JTextField();
     private final JPasswordField txtPass = new JPasswordField();
@@ -13,11 +13,7 @@ public class LoginCustomerFrame extends JFrame {
 
     // === TAMPILAN ===
     public LoginCustomerFrame() {
-        setTitle("HealthyFood - Login Customer");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(480, 540);
-        setLocationRelativeTo(null);
-        setResizable(true);
+        setLayout(new BorderLayout());
 
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(new Color(245, 248, 240));
@@ -56,9 +52,8 @@ public class LoginCustomerFrame extends JFrame {
         // === AKSI TOMBOL ===
         masuk.addActionListener(e -> prosesMasuk());
         daftar.addActionListener(e -> dialogDaftar());
-        admin.addActionListener(e -> { new LoginFrame(); dispose(); });
-        getRootPane().setDefaultButton(masuk);
-        setVisible(true);
+        admin.addActionListener(e -> Navigasi.buka("login-admin", new LoginFrame()));
+        SwingUtilities.invokeLater(() -> getRootPane().setDefaultButton(masuk));
     }
 
     // === LOGIKA LOGIN ===
@@ -70,8 +65,7 @@ public class LoginCustomerFrame extends JFrame {
             txtPass.setText("");
             return;
         }
-        new Tugasgui(akun[1], akun[2]).setVisible(true);
-        dispose();
+        Navigasi.buka("customer", new Tugasgui(akun[1], akun[2]));
     }
 
     // === DIALOG DAFTAR AKUN ===
@@ -88,30 +82,23 @@ public class LoginCustomerFrame extends JFrame {
                 JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) return;
 
         String u = user.getText().trim();
-        String noHP = telp.getText().trim();
         String pw = new String(pass.getPassword());
-
-        // Validasi kolom kosong
-        if (nama.getText().trim().isEmpty() || noHP.isEmpty()
+        if (nama.getText().trim().isEmpty() || telp.getText().trim().isEmpty()
                 || u.isEmpty() || pw.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Semua kolom wajib diisi.");
             return;
         }
-
-        // Validasi nomor HP
+        // Validasi nomor HP: angka, 10-13 digit
+        String noHP = telp.getText().trim();
         if (!noHP.matches("[0-9]{10,13}")) {
-            JOptionPane.showMessageDialog(this,
-                    "Nomor HP harus berupa angka dan terdiri dari 10-13 digit!");
+            JOptionPane.showMessageDialog(this, "Nomor HP harus berupa angka dan terdiri dari 10-13 digit!");
             return;
         }
-
         // Validasi password minimal 8 karakter
         if (pw.length() < 8) {
-            JOptionPane.showMessageDialog(this,
-                    "Password minimal harus 8 karakter!");
+            JOptionPane.showMessageDialog(this, "Password minimal harus 8 karakter!");
             return;
         }
-
         if (!AkunStore.daftar(u, pw, nama.getText().trim(), noHP)) {
             JOptionPane.showMessageDialog(this, "Username sudah dipakai.");
             return;

@@ -127,7 +127,7 @@ public class Tugasgui extends JPanel {
         public boolean getScrollableTracksViewportHeight() { return false; }
     }
 
-    private static final int LEBAR_KARTU_MENU = 180, TINGGI_FOTO_MENU = 130;
+    private static final int LEBAR_KARTU_MENU = 210, TINGGI_FOTO_MENU = 130;
 
     private JPanel buatKartuMenu(ProdukStore.Produk p) {
         String nama = p.nama, kalori = p.kalori;
@@ -153,11 +153,28 @@ public class Tugasgui extends JPanel {
         isi.setOpaque(false);
         isi.setLayout(new BoxLayout(isi, BoxLayout.Y_AXIS));
         isi.setBorder(new EmptyBorder(10, 12, 12, 12));
+
+        JButton btnInfo = new JButton("Gizi");
+        btnInfo.setBackground(HIJAU_MUDA);
+        btnInfo.setForeground(HIJAU_TUA);
+        btnInfo.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnInfo.setFocusPainted(false);
+        btnInfo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnInfo.addActionListener(e -> tampilkanInfoGizi(p));
+
         JButton btnOrder = tombolHijau("Order");
-        btnOrder.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
+        btnOrder.setFont(new Font("Segoe UI", Font.BOLD, 12));
         btnOrder.addActionListener(e -> tambahKeKeranjang(nama, harga));
+
+        JPanel barisTombol = new JPanel(new GridLayout(1, 2, 6, 0));
+        barisTombol.setOpaque(false);
+        barisTombol.setMaximumSize(new Dimension(Integer.MAX_VALUE, 34));
+        barisTombol.add(btnInfo);
+        barisTombol.add(btnOrder);
+
         susun(isi, teks(nama, Font.BOLD, 15, HIJAU_TUA), 2, teks(rp(harga), Font.BOLD, 14, HIJAU_TUA), 2,
-                teks(kalori, Font.PLAIN, 11, Color.DARK_GRAY), 8, btnOrder);
+                teks(kalori, Font.PLAIN, 11, Color.DARK_GRAY), 8, barisTombol);
+
         kartu.add(isi, BorderLayout.CENTER);
         kartu.setPreferredSize(new Dimension(LEBAR_KARTU_MENU, kartu.getPreferredSize().height));
         return kartu;
@@ -403,7 +420,8 @@ public class Tugasgui extends JPanel {
     private <T extends JComponent> T kiri(T c) { c.setAlignmentX(Component.LEFT_ALIGNMENT); return c; }
 
     private JLabel teks(String t, int style, int size, Color warna) {
-        JLabel l = kiri(new JLabel(t));
+        JLabel l = new JLabel(t, SwingConstants.CENTER);
+        l.setAlignmentX(Component.CENTER_ALIGNMENT);
         l.setFont(new Font("Segoe UI", style, size));
         l.setForeground(warna);
         return l;
@@ -474,5 +492,23 @@ public class Tugasgui extends JPanel {
         b.setBorder(new LineBorder(HIJAU_MUDA, 1, true));
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         return b;
+    }
+
+    private void tampilkanInfoGizi(ProdukStore.Produk p) {
+        Window pemilik = SwingUtilities.getWindowAncestor(this);
+        String html = "<html><body style='width:320px;font-family:Segoe UI,sans-serif;'>"
+                + "<h3 style='margin:0 0 6px 0;color:#265F24;'>" + p.nama + "</h3>"
+                + "<p style='margin:0 0 10px 0;color:#444;'>" + p.deskripsi + "</p>"
+                + "<b>Perkiraan Nilai Gizi (per porsi):</b>"
+                + "<ul style='margin:6px 0 10px 18px;padding:0;'>"
+                + "<li><b>Kalori:</b> " + p.kalori + "</li>"
+                + "<li><b>Protein:</b> " + p.protein + "</li>"
+                + "<li><b>Karbohidrat:</b> " + p.karbo + "</li>"
+                + "<li><b>Lemak:</b> " + p.lemak + "</li>"
+                + "<li><b>Serat:</b> " + p.serat + "</li>"
+                + "</ul>"
+                + "<small style='color:#666;'>Informasi gizi merupakan perkiraan per porsi dan dapat berbeda sesuai bahan serta pengolahan.</small>"
+                + "</body></html>";
+        JOptionPane.showMessageDialog(pemilik, html, "Informasi Gizi - " + p.nama, JOptionPane.INFORMATION_MESSAGE);
     }
 }

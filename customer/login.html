@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Customer - HealthyFood</title>
+    <link rel="stylesheet" href="css/customer.css">
+</head>
+<body>
+
+<div class="auth-wrapper">
+    <div class="auth-box">
+        <div class="ikon-auth">🌿</div>
+
+        <h1>Selamat Datang!</h1>
+        <p class="subjudul">Login ke akun HealthyFood kamu</p>
+
+        <div id="pesanLogin" class="pesan-info"></div>
+
+        <form action="login.php" method="POST">
+
+            <div class="form-grup">
+                <label>Nomor HP</label>
+                <input type="tel" name="phone"
+                       placeholder="Masukkan nomor HP"
+                       pattern="[0-9]{11,15}"
+                       minlength="11" maxlength="15" required>
+            </div>
+
+            <div class="form-grup">
+                <label>Password</label>
+                <input type="password" name="password"
+                       placeholder="Masukkan password" required>
+            </div>
+
+            <button type="submit" class="btn-auth">Login</button>
+
+        </form>
+
+        <p class="auth-link">
+            Belum punya akun?
+            <a href="register.html">Daftar sekarang</a>
+        </p>
+
+        <a href="../restoran.html" class="kembali">Kembali ke HealthyFood</a>
+    </div>
+</div>
+
+<script>
+const parameter = new URLSearchParams(window.location.search);
+const pesan = document.getElementById("pesanLogin");
+
+if (parameter.get("status") === "success") {
+    pesan.textContent = "Pendaftaran berhasil! Silakan login.";
+    pesan.className = "pesan-info sukses";
+} else if (parameter.get("error") === "login") {
+    pesan.textContent = "Nomor HP atau password salah.";
+    pesan.className = "pesan-info gagal";
+}
+</script>
+
+</body>
+</html>

@@ -1,8 +1,7 @@
 const KEY_AKTIF = "hf_pesanan_aktif";
-
 const KEY_KERANJANG = KEY.keranjang;
 
-// Baca keranjang tersimpan, lalu cocokkan dengan menu terbaru (produk yang sudah dihapus admin dibuang)
+// Baca keranjang tersimpan, lalu cocokkan dengan menu terbaru
 function muatKeranjang() {
     let tersimpan = [];
     try {
@@ -83,6 +82,7 @@ const DETAIL_MENU = {
 function bukaDetailMenu(id) {
     const produk = Produk.semua().find(function (p) { return p.id === id; });
     if (!produk) return;
+
     const detail = DETAIL_MENU[id] || {
         deskripsi: "Menu makanan dari Healthy Food. Hubungi pengelola untuk mengetahui bahan dan informasi gizi lebih lengkap.",
         protein: "Bervariasi", karbo: "Bervariasi", lemak: "Bervariasi", serat: "Bervariasi"
@@ -130,12 +130,14 @@ btnTutupDetailMenu.addEventListener("click", tutupDetailMenu);
 detailMenuOverlay.addEventListener("click", function (event) {
     if (event.target === detailMenuOverlay) tutupDetailMenu();
 });
+
 btnPesanDetail.addEventListener("click", function () {
     if (detailProdukAktifId === null) return;
     const tombolMenu = menuContainer.querySelector('.btn-pesan[data-id="' + detailProdukAktifId + '"]');
     tutupDetailMenu();
     if (tombolMenu) tombolMenu.click();
 });
+
 document.addEventListener("keydown", function (event) {
     if (event.key === "Escape") tutupDetailMenu();
 });
@@ -196,6 +198,7 @@ function renderMenu() {
             daftarKartu.push({ best: !!p.best, html: kartu(p) });
             return;
         }
+
         if (sudah.includes(p.grup)) return;
 
         sudah.push(p.grup);
@@ -210,7 +213,27 @@ function renderMenu() {
     menuContainer.innerHTML = urutkanBestSeller(daftarKartu).map(function (k) { return k.html; }).join("");
 }
 
-menuContainer.addEventListener("click", function (event) {
+// Menambahkan produk ke keranjang setelah status login dipastikan
+function tambahProdukKeKeranjang(produk) {
+    const ada = keranjang.find(function (item) { return item.id === produk.id; });
+
+    if (ada) {
+        ada.jumlah++;
+    } else {
+        keranjang.push({
+            id: produk.id,
+            nama: produk.nama,
+            harga: produk.harga,
+            jumlah: 1
+        });
+    }
+
+    tampilkanKeranjang();
+    bukaKeranjang();
+}
+
+// Semua tombol Order memeriksa status login terlebih dahulu
+menuContainer.addEventListener("click", async function (event) {
     const tombol = event.target.closest(".btn-pesan");
     if (!tombol) return;
 
@@ -218,17 +241,59 @@ menuContainer.addEventListener("click", function (event) {
     const produk = Produk.semua().find(function (p) { return p.id === id; });
     if (!produk) return;
 
-    const ada = keranjang.find(function (item) { return item.id === id; });
+    try {
+        const response = await fetch("customer/status_login.php", {
+            credentials: "same-origin",
+            cache: "no-store"
+        });
 
-    if (ada) {
-        ada.jumlah++;
-    } else {
-        keranjang.push({ id: produk.id, nama: produk.nama, harga: produk.harga, jumlah: 1 });
+        if (!response.ok) {
+            window.location.href = "customer/login.html";
+            return;
+        }
+
+        const status = await response.json();
+
+        if (!status.login) {
+            sessionStorage.setItem("produk_sebelum_login", String(id));
+            window.location.href = "customer/login.html";
+            return;
+        }
+
+        tambahProdukKeKeranjang(produk);
+    } catch (error) {
+        console.error("Pemeriksaan login gagal:", error);
+        window.location.href = "customer/login.html";
     }
-
-    tampilkanKeranjang();
-    bukaKeranjang();
 });
+
+// Mengembalikan produk yang dipilih sebelum customer login
+async function pulihkanProdukSetelahLogin() {
+    const idTersimpan = sessionStorage.getItem("produk_sebelum_login");
+    if (!idTersimpan) return;
+
+    try {
+        const response = await fetch("customer/status_login.php", {
+            credentials: "same-origin",
+            cache: "no-store"
+        });
+
+        if (!response.ok) return;
+
+        const status = await response.json();
+        if (!status.login) return;
+
+        const id = Number(idTersimpan);
+        const produk = Produk.semua().find(function (p) { return p.id === id; });
+        sessionStorage.removeItem("produk_sebelum_login");
+
+        if (produk) {
+            tambahProdukKeKeranjang(produk);
+        }
+    } catch (error) {
+        console.error("Gagal memulihkan produk setelah login:", error);
+    }
+}
 
 function tampilkanKeranjang() {
     simpanKeranjang();
@@ -556,3 +621,4 @@ renderKonten();
 renderMenu();
 tampilkanKeranjang();
 segarkanStatusPesanan();
+pulihkanProdukSetelahLogin();

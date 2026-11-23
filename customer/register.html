@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Customer - HealthyFood</title>
+    <link rel="stylesheet" href="css/customer.css">
+    <script src="js/customer.js" defer></script>
+</head>
+<body>
+
+<div class="auth-wrapper">
+    <div class="auth-box">
+        <div class="ikon-auth">🌿</div>
+
+        <h1>Buat Akun HealthyFood</h1>
+        <p class="subjudul">Daftar dan nikmati makanan sehat favoritmu</p>
+
+        <form action="register.php" method="POST" id="formRegister">
+
+            <div class="form-grup">
+                <label>Nama Lengkap</label>
+                <input type="text" name="nama"
+                       placeholder="Masukkan nama lengkap" required>
+            </div>
+
+            <div class="form-grup">
+                <label>Username</label>
+                <input type="text" name="username" id="username"
+                       placeholder="Contoh: healthy_01"
+                       minlength="3" pattern="[a-zA-Z0-9._]{3,}"
+                       title="Minimal 3 karakter. Gunakan huruf, angka, titik, atau underscore."
+                       required>
+                <small>Gunakan huruf, angka, titik, atau underscore.</small>
+            </div>
+
+            <div class="form-grup">
+                <label>Nomor HP</label>
+                <input type="tel" name="phone" id="phone"
+                       placeholder="Contoh: 081234567890"
+                       minlength="11" maxlength="15"
+                       pattern="[0-9]{11,15}" required>
+                <small>Minimal 11 digit angka.</small>
+            </div>
+
+            <div class="form-grup">
+                <label>Password</label>
+                <input type="password" name="password" id="password"
+                       placeholder="Buat password"
+                       minlength="8" required>
+                <small>Minimal 8 karakter, wajib mengandung huruf dan angka.</small>
+            </div>
+
+            <p id="pesanValidasi" class="pesan-error"></p>
+
+            <button type="submit" class="btn-auth">Daftar</button>
+
+        </form>
+
+        <p class="auth-link">
+            Sudah punya akun?
+            <a href="login.html">Login di sini</a>
+        </p>
+
+        <a href="../restoran.html" class="kembali">Kembali ke HealthyFood</a>
+    </div>
+</div>
+
+</body>
+</html>

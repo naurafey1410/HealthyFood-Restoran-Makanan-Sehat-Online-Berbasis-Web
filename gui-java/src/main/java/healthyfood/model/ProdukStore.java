@@ -45,7 +45,7 @@ public final class ProdukStore {
         tambahAwal("salad.jpg", "🥗", "Vegetable Salad", "250 - 350 kkal", 22000, "-", true,
                 "Salad sayuran segar yang cocok sebagai pilihan menu ringan dan kaya serat.",
                 "5-8 g", "15-25 g", "8-15 g", "4-7 g");
-        tambahAwal("steak_tempe.webp", "🍽", "Tempeh Steak", "280 - 380 kkal", 34000, "-", true,
+        tambahAwal("steak_tempe.jpg", "🍽", "Tempeh Steak", "280 - 380 kkal", 34000, "-", true,
                 "Steak berbahan dasar tempe yang menawarkan protein nabati dengan cita rasa gurih.",
                 "15-22 g", "20-35 g", "10-18 g", "5-8 g");
         tambahAwal("steak_jamur.jpg", "🍄", "Mushroom Steak", "320 - 420 kkal", 40000, "-", true,
@@ -69,7 +69,7 @@ public final class ProdukStore {
         tambahAwal("salmon_panggang.jpg", "🐟", "Grilled Salmon", "400 - 500 kkal", 43000, "-", false,
                 "Salmon panggang sebagai sumber protein dan lemak omega-3, disajikan sebagai menu utama.",
                 "25-35 g", "5-20 g", "15-25 g", "1-4 g");
-        tambahAwal("kebab_daging.webp", "🌯", "Chicken Caesar Wrap", "380 - 480 kkal", 27000, "-", false,
+        tambahAwal("kebab_daging.jpeg", "🌯", "Chicken Caesar Wrap", "380 - 480 kkal", 27000, "-", false,
                 "Wrap berisi ayam dan sayuran yang praktis untuk dinikmati sebagai menu makan.",
                 "20-30 g", "35-50 g", "10-18 g", "4-7 g");
         tambahAwal("roti_salmon.jpg", "🥯", "Salmon & Cream Cheese Bagel", "350 - 450 kkal", 40000, "-", false,

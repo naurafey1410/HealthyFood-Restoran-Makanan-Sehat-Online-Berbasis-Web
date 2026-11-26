@@ -4,7 +4,14 @@
 }
 body {
     margin: 0;
-    background: #f4f8eb;
+    background: linear-gradient(
+        180deg,
+        #d8ef9a 0%,
+        #f4f8eb 35%,
+        #ffffff 75%
+    );
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     font-family: Arial, Helvetica, sans-serif;
     color: #333;
 }
@@ -185,10 +192,14 @@ a {
 }
 
 .kartu-stat {
-    background: white;
+    background: rgba(255, 255, 255, 0.301);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    z-index: 1000;
     border-radius: 16px;
     padding: 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
     display: flex;
     align-items: center;
     gap: 15px;
@@ -222,10 +233,14 @@ a {
 
 /*PANEL & TABEL*/
 .panel {
-    background: white;
+    background: rgba(255, 255, 255, 0.301);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    z-index: 1000;
     border-radius: 16px;
     padding: 22px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
     overflow-x: auto;
 }
 

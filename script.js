@@ -156,7 +156,7 @@ function kartu(p) {
                 <h3>${esc(p.nama)}</h3>
                 <span>${formatRupiah(p.harga)}</span>
                 <p>${esc(p.kalori)}</p>
-                <div class="best${p.best ? "" : " kosong"}">Best Seller</div>
+                <div class="best${p.best ? "" : " kosong"}">Recomended</div>
                 <button class="btn-pesan" data-id="${p.id}">Order</button>
             </div>
         </div>`;

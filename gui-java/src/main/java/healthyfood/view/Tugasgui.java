@@ -1,11 +1,15 @@
 package healthyfood.view;
 
-import healthyfood.model.Gambar;
-import healthyfood.model.OrderStore;
+import healthyfood.util.Gambar;
+import healthyfood.model.AkunService;
+import healthyfood.model.OrderService;
+import healthyfood.model.KontenStore;
 import healthyfood.model.ProdukStore;
+import healthyfood.util.Validasi;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.awt.geom.*;
 import java.awt.event.*;
 import java.text.*;
 import java.util.*;
@@ -19,10 +23,13 @@ public class Tugasgui extends JPanel {
 
     private static class Item {
         String nama; int harga, qty = 1;
-        Item(String nama, int harga) { this.nama = nama; this.harga = harga; }
+        int itemId;
+        Item(int itemId, String nama, int harga) { this.itemId = itemId; this.nama = nama; this.harga = harga; }
     }
 
     private final ArrayList<Item> keranjang = new ArrayList<>();
+    private JPanel panelKeranjang;   // panel keranjang: tersembunyi sampai ikon keranjang diklik
+    private JButton btnKeranjang;    // tombol keranjang: menampilkan jumlah item
     private final DecimalFormat fmt;
     private final JPanel panelItem = new JPanel(), panelForm = new JPanel();
     private final JLabel lblTotal = new JLabel("Rp 0");
@@ -33,47 +40,104 @@ public class Tugasgui extends JPanel {
     private JScrollPane scrollIsi;
     private JPanel gridMenu;
 
-    public Tugasgui() { this(null, null); }
+    private final int customerId;            // Customer_ID akun yang login
+    private JLabel lblBanner;                // banner notifikasi "pesanan siap diambil"
+    private JPanel panelBanner;
+    private JButton btnPesananSaya;
+    private javax.swing.Timer pemeriksa;     // cek status pesanan berkala
 
-    // === KONSTRUKTOR: nama & telepon terisi otomatis jika customer sudah login ===
-    public Tugasgui(String namaCustomer, String telpCustomer) {
+    // === KONSTRUKTOR: halaman customer hanya dibuka setelah login; nama & telepon terisi otomatis ===
+    public Tugasgui(AkunService.Customer akun) {
+        this.customerId = akun.id;
+        String namaCustomer = akun.nama, telpCustomer = akun.telepon;
         DecimalFormatSymbols sym = new DecimalFormatSymbols(Locale.US);
         sym.setGroupingSeparator('.');
         fmt = new DecimalFormat("#,###", sym);
 
         setLayout(new BorderLayout());
         add(buatPanelMenu(), BorderLayout.CENTER);
-        add(buatPanelPesanan(), BorderLayout.EAST);
+        panelKeranjang = buatPanelPesanan();
+        panelKeranjang.setVisible(false);
+        add(panelKeranjang, BorderLayout.EAST);
         if (namaCustomer != null) {
             txtNama.setText(namaCustomer); txtNama.setForeground(Color.BLACK);
             txtTelepon.setText(telpCustomer); txtTelepon.setForeground(Color.BLACK);
         }
         refreshKeranjang();
+
+        // Cek status pesanan tiap 3 detik selama halaman ini tampil
+        pemeriksa = new javax.swing.Timer(3000, e -> segarkanNotifikasi());
+        segarkanNotifikasi();
+        SwingUtilities.invokeLater(this::popupSiapDiambil);   // saat baru masuk, beri tahu jika ada yang siap
     }
+
+    @Override public void addNotify() { super.addNotify(); if (pemeriksa != null) pemeriksa.start(); }
+    @Override public void removeNotify() { if (pemeriksa != null) pemeriksa.stop(); super.removeNotify(); }
 
     // ================= PANEL MENU (KIRI) =================
     private JPanel buatPanelMenu() {
-        JPanel root = new JPanel(new BorderLayout());
-        root.setBackground(HIJAU_BG);
+        JPanel root = Gaya.latarKosong(new BorderLayout());
         root.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        JPanel header = new JPanel(new GridLayout(2, 1));
-        header.setOpaque(false);
-        header.setBorder(new EmptyBorder(0, 0, 20, 0));
-        header.add(teks("Healthy Food", Font.BOLD, 28, HIJAU_TUA));
-        header.add(teks("Start your journey toward a healthy lifestyle by consuming foods rich in fiber and vitamins for a brilliant future", Font.PLAIN, 14, Color.BLACK));
-        root.add(header, BorderLayout.NORTH);
+        // === HEADER: panel gradasi berisi judul, tombol Keranjang, dan Logout ===
+        JPanel header = Gaya.panelGradasi(new BorderLayout());
+        header.setBorder(new EmptyBorder(18, 26, 18, 26));
+        JPanel judul = new JPanel(new GridLayout(2, 1));
+        judul.setOpaque(false);
+        judul.add(teks(KontenStore.getJudul(), Font.BOLD, 28, Color.WHITE));
+        judul.add(teks(KontenStore.getDeskripsi(), Font.PLAIN, 14, new Color(225, 245, 225)));
+        for (Component c : judul.getComponents()) ((JLabel) c).setHorizontalAlignment(SwingConstants.LEFT);
+        header.add(judul, BorderLayout.CENTER);
+
+        // === BANNER NOTIFIKASI: muncul saat admin menandai pesanan Siap Diambil ===
+        panelBanner = new JPanel(new BorderLayout(12, 0));
+        panelBanner.setBackground(new Color(0xFFF1C5));
+        panelBanner.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0xE6A600)), new EmptyBorder(10, 16, 10, 16)));
+        lblBanner = new JLabel(" ");
+        lblBanner.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblBanner.setForeground(new Color(0x265F24));
+        JButton lihat = new JButton("Lihat pesanan");
+        lihat.setFocusPainted(false);
+        lihat.addActionListener(e -> bukaPesananSaya());
+        panelBanner.add(lblBanner, BorderLayout.CENTER);
+        panelBanner.add(lihat, BorderLayout.EAST);
+        panelBanner.setVisible(false);
+
+        JPanel atas = new JPanel(new BorderLayout(0, 10));
+        atas.setOpaque(false);
+        atas.add(header, BorderLayout.NORTH);
+        atas.add(panelBanner, BorderLayout.CENTER);
+        root.add(atas, BorderLayout.NORTH);
 
         // === TOMBOL LOGIN ADMIN (kecil, di bawah) ===
-        JButton adminLogin = tombolHijau("Login Admin");
-        adminLogin.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        adminLogin.setBorder(new EmptyBorder(6, 14, 6, 14));
-        adminLogin.addActionListener(e -> Navigasi.buka("login-admin", new LoginFrame()));
+        JButton logout = Gaya.tombolPutih("Logout");
+        ukuranHeader(logout);
+        logout.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        logout.setBorder(new EmptyBorder(6, 14, 6, 14));
+        // Logout: kembali ke login customer; login admin tidak lagi ada di halaman ini
+        logout.addActionListener(e -> Navigasi.buka("pilihan", new LayarPilihan()));
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         footer.setOpaque(false);
-        footer.setBorder(new EmptyBorder(16, 0, 0, 0));
-        footer.add(adminLogin);
-        root.add(footer, BorderLayout.SOUTH);
+        footer.setBorder(new EmptyBorder(0, 0, 0, 0));
+        // === TOMBOL KERANJANG: buka/tutup panel keranjang ===
+        btnKeranjang = Gaya.tombolPutih("Keranjang (0)");
+        ukuranHeader(btnKeranjang);
+        btnKeranjang.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnKeranjang.setBorder(new EmptyBorder(6, 14, 6, 14));
+        btnKeranjang.addActionListener(e -> {
+            panelKeranjang.setVisible(!panelKeranjang.isVisible());
+            getParent().revalidate();
+        });
+        btnPesananSaya = Gaya.tombolPutih("Pesanan Saya");
+        ukuranHeader(btnPesananSaya);
+        btnPesananSaya.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnPesananSaya.setBorder(new EmptyBorder(6, 14, 6, 14));
+        btnPesananSaya.addActionListener(e -> bukaPesananSaya());
+        footer.add(btnPesananSaya);
+        footer.add(btnKeranjang);
+        footer.add(logout);
+        header.add(footer, BorderLayout.EAST);
         
         // === DAFTAR MENU (dari ProdukStore, sama dengan halaman admin) ===
         gridMenu = new PanelMenu();
@@ -132,78 +196,122 @@ public class Tugasgui extends JPanel {
     private JPanel buatKartuMenu(ProdukStore.Produk p) {
         String nama = p.nama, kalori = p.kalori;
         int harga = p.harga;
-        JPanel kartu = new JPanel(new BorderLayout());
-        kartu.setBackground(Color.WHITE);
-        kartu.setBorder(BorderFactory.createLineBorder(new Color(0xE3E8DA)));
-        // === FOTO: penuh sampai tepi kartu ===
-        JLabel foto;
-        if (p.foto instanceof ImageIcon) {
-            foto = new JLabel(Gambar.ikonIsi((ImageIcon) p.foto, LEBAR_KARTU_MENU, TINGGI_FOTO_MENU));
-        } else {
-            foto = new JLabel(String.valueOf(p.foto), SwingConstants.CENTER);
-            foto.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 60));
-        }
-        foto.setOpaque(true);
-        foto.setBackground(new Color(0xF1F5E8));
-        foto.setPreferredSize(new Dimension(LEBAR_KARTU_MENU, TINGGI_FOTO_MENU));
+        ImageIcon ikon = p.foto instanceof ImageIcon
+                ? Gambar.ikonIsi((ImageIcon) p.foto, LEBAR_KARTU_MENU - 6, TINGGI_FOTO_MENU) : null;
+        String cadangan = String.valueOf(p.foto);
+
+        // Kartu putih dengan bayangan lembut dan sudut membulat
+        JPanel kartu = new JPanel(new BorderLayout()) {
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(40, 90, 50, 22));
+                g2.fill(new RoundRectangle2D.Float(3, 5, getWidth() - 6, getHeight() - 6, 26, 26));
+                g2.setColor(Color.WHITE);
+                g2.fill(new RoundRectangle2D.Float(0, 0, getWidth() - 6, getHeight() - 6, 26, 26));
+                g2.dispose();
+            }
+        };
+        kartu.setOpaque(false);
+
+        // Foto dengan sudut atas membulat; label Best seller di pojok kiri atas
+        JComponent foto = new JComponent() {
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                g2.clip(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight() + 30, 26, 26));
+                if (ikon != null) {
+                    g2.drawImage(ikon.getImage(), 0, 0, null);
+                } else {
+                    g2.setColor(new Color(0xF1F5E8));
+                    g2.fillRect(0, 0, getWidth(), getHeight());
+                    g2.setColor(HIJAU_TUA);
+                    g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 56));
+                    FontMetrics fm = g2.getFontMetrics();
+                    g2.drawString(cadangan, (getWidth() - fm.stringWidth(cadangan)) / 2,
+                            (getHeight() + fm.getAscent() - fm.getDescent()) / 2);
+                }
+                g2.setClip(null);
+                if (p.bestSeller) {
+                    g2.setColor(new Color(255, 214, 102));
+                    g2.fill(new RoundRectangle2D.Float(12, 12, 116, 24, 24, 24));
+                    g2.setFont(new Font("Segoe UI", Font.BOLD, 11));
+                    g2.setColor(new Color(120, 70, 0));
+                    g2.drawString("Recommended", 22, 28);
+                }
+                g2.dispose();
+            }
+        };
+        foto.setPreferredSize(new Dimension(LEBAR_KARTU_MENU - 6, TINGGI_FOTO_MENU));
         kartu.add(foto, BorderLayout.NORTH);
 
-        // === ISI KARTU ===
+        // Isi kartu: nama, harga, kalori, lalu tombol Gizi dan Order
         JPanel isi = new JPanel();
         isi.setOpaque(false);
         isi.setLayout(new BoxLayout(isi, BoxLayout.Y_AXIS));
-        isi.setBorder(new EmptyBorder(10, 12, 12, 12));
+        isi.setBorder(new EmptyBorder(12, 12, 14, 12));
 
-        JButton btnInfo = new JButton("Gizi");
-        btnInfo.setBackground(HIJAU_MUDA);
-        btnInfo.setForeground(HIJAU_TUA);
-        btnInfo.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btnInfo.setFocusPainted(false);
-        btnInfo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        JButton btnInfo = Gaya.tombolPutih("Gizi");
+        ukuranPil(btnInfo);
         btnInfo.addActionListener(e -> tampilkanInfoGizi(p));
 
-        JButton btnOrder = tombolHijau("Order");
-        btnOrder.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btnOrder.addActionListener(e -> tambahKeKeranjang(nama, harga));
+        JButton btnOrder = Gaya.tombolUtama("Order");
+        ukuranPil(btnOrder);
+        btnOrder.addActionListener(e -> tambahKeKeranjang(p.id, nama, harga));
 
-        JPanel barisTombol = new JPanel(new GridLayout(1, 2, 6, 0));
+        JPanel barisTombol = new JPanel(new GridLayout(1, 2, 8, 0));
         barisTombol.setOpaque(false);
-        barisTombol.setMaximumSize(new Dimension(Integer.MAX_VALUE, 34));
+        barisTombol.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
         barisTombol.add(btnInfo);
         barisTombol.add(btnOrder);
 
         susun(isi, teks(nama, Font.BOLD, 15, HIJAU_TUA), 2, teks(rp(harga), Font.BOLD, 14, HIJAU_TUA), 2,
-                teks(kalori, Font.PLAIN, 11, Color.DARK_GRAY), 8, barisTombol);
+                teks(kalori, Font.PLAIN, 11, Color.DARK_GRAY), 10, barisTombol);
 
         kartu.add(isi, BorderLayout.CENTER);
         kartu.setPreferredSize(new Dimension(LEBAR_KARTU_MENU, kartu.getPreferredSize().height));
         return kartu;
     }
 
+    // Tombol di header customer (Keranjang dan Logout)
+    private void ukuranHeader(JButton b) {
+        b.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        b.setPreferredSize(new Dimension(150, 38));
+        b.setMaximumSize(new Dimension(150, 38));
+        b.setBorder(new EmptyBorder(0, 10, 0, 10));
+    }
+
+    // Tombol kecil berbentuk kapsul untuk kartu menu
+    private void ukuranPil(JButton b) {
+        b.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        b.setPreferredSize(new Dimension(80, 34));
+        b.setMaximumSize(new Dimension(Integer.MAX_VALUE, 34));
+    }
+
     // ================= PANEL KANAN =================
     private JPanel buatPanelPesanan() {
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = Gaya.latarKosong(new BorderLayout());
         panel.setPreferredSize(new Dimension(430, 720));
-        panel.setBackground(Color.WHITE);
 
         // Header
         JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(HIJAU_MUDA);
-        header.setBorder(new EmptyBorder(16, 20, 16, 20));
-        JLabel judul = new JLabel("🛒 Pesanan");
-        judul.setFont(new Font("Segoe UI Emoji", Font.BOLD, 22));
+        header.setOpaque(false);
+        header.setBorder(new EmptyBorder(16, 20, 12, 20));
+        JLabel judul = new JLabel("Pesanan");
+        judul.setFont(new Font("Segoe UI", Font.BOLD, 22));
         judul.setForeground(HIJAU_TUA);
         header.add(judul, BorderLayout.WEST);
         panel.add(header, BorderLayout.NORTH);
 
         // Isi: daftar item + form (tersembunyi dulu)
         panelItem.setLayout(new BoxLayout(panelItem, BoxLayout.Y_AXIS));
-        panelItem.setBackground(Color.WHITE);
+        panelItem.setOpaque(false);
         buatPanelForm();
         panelForm.setVisible(false);
 
         JPanel isi = new JPanel(new BorderLayout());
-        isi.setBackground(Color.WHITE);
+        isi.setOpaque(false);
         isi.add(panelItem, BorderLayout.NORTH);
         isi.add(panelForm, BorderLayout.CENTER);
 
@@ -213,6 +321,8 @@ public class Tugasgui extends JPanel {
 
         scrollIsi = new JScrollPane(wrapper);
         scrollIsi.setBorder(null);
+        scrollIsi.setOpaque(false);
+        scrollIsi.getViewport().setOpaque(false);
         scrollIsi.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollIsi.getVerticalScrollBar().setUnitIncrement(14);
         panel.add(scrollIsi, BorderLayout.CENTER);
@@ -220,7 +330,7 @@ public class Tugasgui extends JPanel {
         // Bawah: total + tombol konfirmasi
         JPanel bawah = new JPanel();
         bawah.setLayout(new BoxLayout(bawah, BoxLayout.Y_AXIS));
-        bawah.setBackground(Color.WHITE);
+        bawah.setOpaque(false);
         bawah.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createMatteBorder(1, 0, 0, 0, GARIS), new EmptyBorder(16, 20, 20, 20)));
 
@@ -283,10 +393,14 @@ public class Tugasgui extends JPanel {
         pnlBayar.add(btnTransfer);
         pnlBayar.add(btnQris);
 
+        for (JTextField f : new JTextField[]{txtNama, txtTelepon}) {
+            f.setPreferredSize(new Dimension(100, 40));
+            f.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+            f.setBorder(BorderFactory.createCompoundBorder(new LineBorder(ABU, 1, true), new EmptyBorder(6, 10, 6, 10)));
+        }
         susun(panelForm,
                 teks("Nama Pemesan:", Font.BOLD, 14, Color.BLACK), 6, fieldDenganHint(txtNama, "Masukkan nama Anda..."), 12,
                 teks("Nomor Telepon:", Font.BOLD, 14, Color.BLACK), 6, fieldDenganHint(txtTelepon, "Contoh: 08123456789"), 12,
-                teks("Alamat Lengkap:", Font.BOLD, 14, Color.BLACK), 6, spAlamat, 12,
                 teks("Metode Pembayaran:", Font.BOLD, 14, Color.BLACK), 6, pnlBayar);
     }
 
@@ -296,17 +410,22 @@ public class Tugasgui extends JPanel {
     }
 
     // ================= LOGIKA =================
-    private void tambahKeKeranjang(String nama, int harga) {
+    private void tambahKeKeranjang(int itemId, String nama, int harga) {
         for (Item it : keranjang)
             if (it.nama.equals(nama)) { it.qty++; refreshKeranjang(); return; }
-        keranjang.add(new Item(nama, harga));
+        keranjang.add(new Item(itemId, nama, harga));
         refreshKeranjang();
     }
 
     private void refreshKeranjang() {
+        if (btnKeranjang != null) {
+            int jumlah = 0;
+            for (Item it : keranjang) jumlah += it.qty;
+            btnKeranjang.setText("Keranjang (" + jumlah + ")");
+        }
         panelItem.removeAll();
         if (keranjang.isEmpty()) {
-            JLabel kosong = new JLabel("🛒 Keranjang masih kosong", SwingConstants.CENTER);
+            JLabel kosong = new JLabel("Keranjang masih kosong", SwingConstants.CENTER);
             kosong.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
             kosong.setForeground(Color.GRAY);
             kosong.setPreferredSize(new Dimension(100, 120));
@@ -358,25 +477,20 @@ public class Tugasgui extends JPanel {
     private void selesaikanPesanan() {
         String nama = isiField(txtNama), telp = isiField(txtTelepon), alamat = txtAlamat.getText().trim();
 
-        if (nama.isEmpty() || telp.isEmpty() || alamat.isEmpty()) {
-            pesan("Nama, nomor telepon, dan alamat wajib diisi!"); return;
-        }
-        if (!telp.matches("\\d{9,15}")) {
-            pesan("Nomor telepon harus berupa angka (9-15 digit)."); return;
-        }
-        if (bg.getSelection() == null) {
-            pesan("Pilih metode pembayaran terlebih dahulu!"); return;
-        }
+        String metodeDipilih = bg.getSelection() == null ? null : "pilih";
+        String err = Validasi.pesanan(nama, telp, alamat, metodeDipilih, keranjang.isEmpty());
+        if (err != null) { pesan(err); return; }
 
         String metode = btnTransfer.isSelected() ? "Transfer Bank" : "QRIS";
-        java.util.List<String> rincian = new java.util.ArrayList<>();
-        int total = 0;
-        for (Item it : keranjang) {
-            int sub = it.harga * it.qty;
-            total += sub;
-            rincian.add(it.nama + " x" + it.qty + " = " + rp(sub));
+        java.util.List<OrderService.ItemPesan> items = new java.util.ArrayList<>();
+        for (Item it : keranjang) items.add(new OrderService.ItemPesan(it.itemId, it.qty, it.harga));
+        OrderService.Order order;
+        try {
+            order = OrderService.buat(customerId, metode, items);   // disimpan ke tabel orders dan order_item
+        } catch (IllegalStateException ex) {
+            pesan(ex.getMessage());
+            return;
         }
-        OrderStore.Order order = OrderStore.add(nama, telp, alamat, metode, rincian, total);
         bukaJendelaPembayaran(order);
 
         // Reset
@@ -390,11 +504,81 @@ public class Tugasgui extends JPanel {
         panelForm.setVisible(false);
     }
 
+    // ================= NOTIFIKASI PESANAN SIAP DIAMBIL =================
+    /** Perbarui banner dan tombol "Pesanan Saya" sesuai status terbaru dari admin. */
+    private void segarkanNotifikasi() {
+        if (panelBanner == null) return;
+        java.util.List<OrderService.Order> siap;
+        try {
+            siap = OrderService.siapBelumDilihat(customerId);
+        } catch (IllegalStateException ex) {
+            return;   // database sedang tidak terjangkau; coba lagi pada pengecekan berikutnya
+        }
+        if (siap.isEmpty()) {
+            panelBanner.setVisible(false);
+            btnPesananSaya.setText("Pesanan Saya");
+        } else {
+            StringBuilder nomor = new StringBuilder();
+            for (OrderService.Order o : siap) nomor.append(nomor.length() == 0 ? "" : ", ").append("#").append(o.id);
+            lblBanner.setText("Pesanan " + nomor + " sudah siap! Silakan ambil di Jl. Cipta Karya Ujung.");
+            panelBanner.setVisible(true);
+            btnPesananSaya.setText("Pesanan Saya (" + siap.size() + ")");
+        }
+        panelBanner.getParent().revalidate();
+    }
+
+    /** Dialog sekali saat customer baru masuk, jika ada pesanan siap diambil yang belum dilihat. */
+    private void popupSiapDiambil() {
+        java.util.List<OrderService.Order> siap;
+        try {
+            siap = OrderService.siapBelumDilihat(customerId);
+        } catch (IllegalStateException ex) {
+            return;
+        }
+        if (siap.isEmpty()) return;
+        StringBuilder sb = new StringBuilder("Kabar baik! Pesanan berikut sudah siap diambil:\n\n");
+        for (OrderService.Order o : siap) sb.append("  \u2022 Pesanan #").append(o.id).append(" (").append(o.rupiah()).append(")\n");
+        sb.append("\nAmbil di: Jl. Cipta Karya Ujung");
+        JOptionPane.showMessageDialog(this, sb.toString(), "Pesanan Siap Diambil", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    /** Daftar semua pesanan customer beserta statusnya. Membukanya menandai notifikasi sudah dilihat. */
+    private void bukaPesananSaya() {
+        String[] kolom = {"No", "Tanggal", "Pesanan", "Total", "Status"};
+        javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(kolom, 0) {
+            @Override public boolean isCellEditable(int r, int c) { return false; }
+        };
+        java.util.List<OrderService.Order> milik;
+        try {
+            milik = OrderService.milik(customerId);
+            OrderService.tandaiDilihat(customerId);
+        } catch (IllegalStateException ex) {
+            pesan(ex.getMessage());
+            return;
+        }
+        for (OrderService.Order o : milik) {
+            String status = OrderService.SIAP_DIAMBIL.equals(o.status) ? "\u2714 Siap Diambil" : o.status;
+            model.addRow(new Object[]{"#" + o.id, o.tanggal, String.join("; ", o.rincian), o.rupiah(), status});
+        }
+        JTable tabel = new JTable(model);
+        tabel.setRowHeight(30);
+        tabel.getColumnModel().getColumn(2).setPreferredWidth(320);
+        JScrollPane gulir = new JScrollPane(tabel);
+        gulir.setPreferredSize(new Dimension(780, 320));
+        JLabel info = new JLabel(model.getRowCount() == 0 ? "Belum ada pesanan." : "Status diperbarui otomatis oleh admin.");
+        JPanel isi = new JPanel(new BorderLayout(0, 8));
+        isi.add(info, BorderLayout.NORTH);
+        isi.add(gulir, BorderLayout.CENTER);
+
+        segarkanNotifikasi();
+        JOptionPane.showMessageDialog(this, isi, "Pesanan Saya", JOptionPane.PLAIN_MESSAGE);
+    }
+
     // ================= HELPER =================
     private String rp(int angka) { return "Rp " + fmt.format(angka); }
 
     // === JENDELA PEMBAYARAN: terpisah dari halaman customer, ukurannya seperti panel ===
-    private void bukaJendelaPembayaran(OrderStore.Order order) {
+    private void bukaJendelaPembayaran(OrderService.Order order) {
         Window pemilik = SwingUtilities.getWindowAncestor(this);
         JDialog dlg = new JDialog(pemilik, "Pembayaran - Pesanan #" + order.id, Dialog.ModalityType.APPLICATION_MODAL);
         JScrollPane gulir = new JScrollPane(new PembayaranGUI(order));

@@ -1,8 +1,8 @@
 package healthyfood.app;
 
-import healthyfood.view.LoginCustomerFrame;
+import healthyfood.view.LayarPilihan;
 import healthyfood.view.Navigasi;
-import healthyfood.view.Tema;
+import healthyfood.util.Tema;
 import javax.swing.SwingUtilities;
 
 //Titik awal aplikasi HealthyFood: satu jendela, halaman berganti di dalamnya
@@ -11,7 +11,7 @@ public class App {
         Tema.pakai();
         SwingUtilities.invokeLater(() -> {
             Navigasi.mulai();
-            Navigasi.buka("login-customer", new LoginCustomerFrame());
+            Navigasi.buka("pilihan", new LayarPilihan());
         });
     }
 }

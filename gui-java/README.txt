@@ -1,20 +1,23 @@
-STRUKTUR GUI HEALTHY FOOD
+HEALTHY FOOD - APLIKASI DESKTOP (Java Swing + MySQL/MariaDB)
 
-Project ini sudah dipisahkan berdasarkan tanggung jawab class:
-- healthyfood.app : titik awal aplikasi (App.java)
-- healthyfood.view : seluruh class tampilan GUI (LoginFrame, DashboardProdukGUI,
-  PembayaranGUI, StatusPesananFrame, Tugasgui)
-- healthyfood.model : pengelolaan/penyimpanan data pesanan (OrderStore)
-- healthyfood.latihan : program latihan keamanan yang terpisah (Main.java),
-  bukan bagian dari alur GUI HealthyFood.
+STRUKTUR (src/main/java/healthyfood)
+- app     : App.java (titik awal)
+- config  : Database.java (koneksi), CekDatabase.java (pengecekan dari terminal)
+- dao     : ItemDAO, AkunDAO, OrderDAO (semua perintah SQL ada di sini)
+- model   : ProdukStore (menu), AkunService (login/daftar), OrderService (pesanan + status),
+            KontenStore (judul header, di memori)
+- util    : Gambar, Tema, Validasi
+- view    : seluruh tampilan GUI
 
-CARA MENJALANKAN
-1. Buka folder GUI HEALTHY FOOD TERINTEGRASI di NetBeans sebagai project Java.
-   Jika membuat project baru, salin folder healthyfood ke Source Packages.
-2. Jalankan file healthyfood.app.App.java.
+ALUR DATA
+  GUI -> Service/Store -> DAO -> database healthy_food
+  Menu = tabel item | Akun = admin, customer | Pesanan = orders, order_item
 
-Jika menggunakan terminal dari folder project:
-  javac -encoding UTF-8 -d out src/main/java/healthyfood/model/OrderStore.java src/main/java/healthyfood/view/*.java src/main/java/healthyfood/app/App.java
-  java -cp out healthyfood.app.App
+CARA MENJALANKAN DARI TERMINAL (Windows, XAMPP di C:\xampp)
+1. Jalankan MySQL      : C:\xampp\mysql_start.bat           (biarkan jendelanya terbuka)
+2. Buat database      : C:\xampp\mysql\bin\mysql.exe -u root -e "CREATE DATABASE IF NOT EXISTS healthy_food CHARACTER SET utf8mb4"
+3. Impor tabel (cmd)  : C:\xampp\mysql\bin\mysql.exe -u root healthy_food < ..\database\healthy_food.sql
+4. Cek database       : cek-database.bat
+5. Jalankan aplikasi  : run.bat
 
-Main.java pada package healthyfood.latihan adalah program latihan terpisah dan tidak perlu dijalankan untuk membuka aplikasi GUI.
+Akun contoh: admin dimas / admin123 ; customer ainiimup / customer123

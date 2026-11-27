@@ -1,7 +1,7 @@
 package healthyfood.view;
 
-import healthyfood.model.Gambar;
-import healthyfood.model.OrderStore;
+import healthyfood.util.Gambar;
+import healthyfood.model.OrderService;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -25,7 +25,7 @@ public class PembayaranGUI extends JPanel {
     private static final Color GARIS_ABU = new Color(214, 220, 208);
     private static final Color YELLOW = new Color(255, 241, 197);
 
-    private final OrderStore.Order order;
+    private final OrderService.Order order;
     private int step = 1;
     private JPanel stepper;
     private JLabel statusLabel;
@@ -33,7 +33,7 @@ public class PembayaranGUI extends JPanel {
 
     public PembayaranGUI() { this(null); }
 
-    public PembayaranGUI(OrderStore.Order order) {
+    public PembayaranGUI(OrderService.Order order) {
         this.order = order;
         setLayout(new BorderLayout());
         setBackground(WARNA_LATAR);
@@ -47,6 +47,8 @@ public class PembayaranGUI extends JPanel {
         kartu.add(judul("Order Diterima!", 27, Font.BOLD, DARK_GREEN));
         kartu.add(Box.createVerticalStrut(6));
         kartu.add(judul("Selesaikan pembayaran agar pesanan dapat diproses.", 15, Font.PLAIN, new Color(85, 91, 83)));
+        kartu.add(Box.createVerticalStrut(6));
+        kartu.add(judul("Ambil pesanan di: Jl. Cipta Karya Ujung", 15, Font.BOLD, DARK_GREEN));
         kartu.add(Box.createVerticalStrut(20));
 
         stepper = new JPanel(new GridLayout(1, 3, 8, 0));
@@ -90,9 +92,16 @@ public class PembayaranGUI extends JPanel {
     // === AKSI TOMBOL: customer hanya bisa kirim ke verifikasi admin ===
     private void klikKonfirmasi() {
         if (step == 1) {
+            if (order != null) {
+                try {
+                    OrderService.konfirmasiTransfer(order);
+                } catch (IllegalStateException ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage());
+                    return;
+                }
+            }
             step = 2;
-            if (order != null) order.status = OrderStore.MENUNGGU_VERIF;
-            statusLabel.setText("<html><div style='text-align:center'>Pembayaran sedang diverifikasi admin.<br>Status pesanan: Verifikasi.</div></html>");
+            statusLabel.setText("<html><div style='text-align:center'>Terima kasih. Admin akan memverifikasi pembayaran Anda.<br>Setelah diverifikasi, pesanan dapat diambil di restoran.</div></html>");
             statusLabel.setOpaque(true);
             statusLabel.setBackground(YELLOW);
             statusLabel.setBorder(new EmptyBorder(12, 8, 12, 8));
@@ -129,7 +138,7 @@ public class PembayaranGUI extends JPanel {
 
         r = barisInfo(kotak, r, "Nama", order == null ? "Contoh Customer" : order.nama);
         r = barisInfo(kotak, r, "Telepon", order == null ? "-" : order.telepon);
-        r = barisInfo(kotak, r, "Alamat", order == null ? "-" : order.alamat);
+        r = barisInfo(kotak, r, "Ambil di", "Restoran (Jl. Cipta Karya Ujung)");
         r = barisInfo(kotak, r, "Metode", order == null ? "Transfer" : order.metode);
 
         r = garis(kotak, r);
@@ -211,7 +220,7 @@ public class PembayaranGUI extends JPanel {
         garis.setAlignmentX(Component.CENTER_ALIGNMENT);
         kotak.add(garis);
         kotak.add(Box.createVerticalStrut(12));
-        kotak.add(teksTengah("Total: " + (order == null ? "Rp 28.000" : order.rupiah()), 17, Font.BOLD, GREEN));
+        kotak.add(teksTengah("Transfer sesuai total: " + (order == null ? "Rp 28.000" : order.rupiah()), 17, Font.BOLD, GREEN));
 
         kotak.setMaximumSize(new Dimension(Integer.MAX_VALUE, kotak.getPreferredSize().height));
         return kotak;
@@ -234,7 +243,7 @@ public class PembayaranGUI extends JPanel {
     // === STEPPER 1-2-3 ===
     private void updateStepper() {
         stepper.removeAll();
-        String[] labels = {"Pembayaran", "Verifikasi Admin", "Lunas"};
+        String[] labels = {"Pembayaran", "Konfirmasi", "Siap Diambil"};
         for (int i = 1; i <= 3; i++) {
             JPanel item = new JPanel();
             item.setOpaque(false);

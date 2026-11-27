@@ -1,9 +1,10 @@
 package healthyfood.view;
 
-import healthyfood.model.AkunStore;
+import healthyfood.model.AkunService;
 import javax.swing.*;
 import java.awt.*;
 
+/** Login admin. Berhasil masuk ke dashboard admin; tombol kembali ke layar pilihan. */
 public class LoginFrame extends JPanel {
 
     private JTextField usernameField;
@@ -13,71 +14,47 @@ public class LoginFrame extends JPanel {
     public LoginFrame() {
         setLayout(new BorderLayout());
 
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(new Color(245, 248, 240));
-        panel.setBorder(BorderFactory.createEmptyBorder(25, 40, 25, 40));
+        JPanel kartu = Gaya.kartu();
+        kartu.add(Gaya.lencana());
+        kartu.add(Box.createVerticalStrut(20));
+        kartu.add(Gaya.judul("Admin HealthyFood", 30));
+        kartu.add(Box.createVerticalStrut(8));
+        kartu.add(Gaya.sub("Masuk untuk mengelola restoran Anda"));
+        kartu.add(Box.createVerticalStrut(28));
 
-        JPanel form = new JPanel(new GridLayout(0, 1, 0, 10));
-        form.setBackground(Color.WHITE);
-        form.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
-
-        JLabel judul = new JLabel("Admin HealthyFood", SwingConstants.CENTER);
-        judul.setFont(new Font("Segoe UI", Font.BOLD, 25));
-        judul.setForeground(new Color(25, 80, 35));
-
-        JLabel subtitle = new JLabel(
-            "Masuk untuk mengelola restoran Anda",
-            SwingConstants.CENTER
-        );
-        subtitle.setForeground(Color.GRAY);
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-
-        usernameField = new JTextField();
-        usernameField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-
-        passwordField = new JPasswordField();
-        passwordField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-
-        JButton loginButton = new JButton("Masuk");
-        loginButton.setBackground(new Color(46, 110, 44));
-        loginButton.setForeground(Color.WHITE);
-        loginButton.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        loginButton.setFocusPainted(false);
+        usernameField = Gaya.fieldGelap();
+        passwordField = Gaya.passwordGelap();
+        kartu.add(Gaya.blokKolom("Username", usernameField));
+        kartu.add(Box.createVerticalStrut(16));
+        kartu.add(Gaya.blokKolom("Password", passwordField));
+        kartu.add(Box.createVerticalStrut(10));
 
         alertLabel = new JLabel(" ", SwingConstants.CENTER);
-        alertLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        alertLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        alertLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        kartu.add(alertLabel);
+        kartu.add(Box.createVerticalStrut(14));
 
-        JButton kembaliButton = new JButton("← Kembali ke login customer");
-        kembaliButton.setForeground(new Color(15, 100, 35));
-        kembaliButton.setBorderPainted(false);
-        kembaliButton.setContentAreaFilled(false);
-        kembaliButton.setFocusPainted(false);
+        JButton loginButton = Gaya.tombolUtama("Masuk");
+        JButton kembali = Gaya.tombolLink("← Kembali ke pilihan masuk");
+        kartu.add(loginButton);
+        kartu.add(Box.createVerticalStrut(22));
+        kartu.add(kembali);
 
-        form.add(judul);
-        form.add(subtitle);
-        form.add(new JLabel("Username"));
-        form.add(usernameField);
-        form.add(new JLabel("Password"));
-        form.add(passwordField);
-        form.add(alertLabel);
-        form.add(loginButton);
-        form.add(kembaliButton);
-        kembaliButton.addActionListener(e -> {
-            Navigasi.buka("login-customer", new LoginCustomerFrame());
-        });
-
-        panel.add(form);
-        add(panel);
-
-        // === AKSI LOGIN ADMIN ===
+        kembali.addActionListener(e -> Navigasi.buka("pilihan", new LayarPilihan()));
         loginButton.addActionListener(e -> {
             String username = usernameField.getText().trim();
             String password = new String(passwordField.getPassword());
-
-            if (AkunStore.cekAdmin(username, password)) {
-
+            boolean adminBenar;
+            try {
+                adminBenar = AkunService.cekAdmin(username, password);
+            } catch (IllegalStateException ex) {
+                alertLabel.setText("Database tidak terhubung. Jalankan MySQL lalu coba lagi.");
+                alertLabel.setForeground(Color.RED);
+                return;
+            }
+            if (adminBenar) {
                 Navigasi.buka("admin", new DashboardProdukGUI());
-
             } else {
                 alertLabel.setText("Username atau password salah!");
                 alertLabel.setForeground(Color.RED);
@@ -85,6 +62,8 @@ public class LoginFrame extends JPanel {
             }
         });
 
+        Gaya.kunciLebar(kartu);
+        add(Gaya.latar(kartu), BorderLayout.CENTER);
         SwingUtilities.invokeLater(() -> getRootPane().setDefaultButton(loginButton));
     }
 }
